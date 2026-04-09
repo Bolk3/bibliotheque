@@ -8,7 +8,8 @@ public abstract class Oeuvre {
     /**
      * Default constructor
      */
-    public Oeuvre(String titre,
+    public Oeuvre(
+			String titre,
 			String cote,
 			String editeur,
 			Date dateParution,

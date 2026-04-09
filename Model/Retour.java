@@ -10,7 +10,13 @@ public class Retour {
     /**
      * Default constructor
      */
-    public Retour() {
+    public Retour(
+			String etatRendus,
+			Emprunt emprunt,
+			Bibliothecaire validerPar) {
+		this.etatRendus = etatRendus;
+		this.emprunt = emprunt;
+		this.validePar = validerPar;
     }
 
     /**
@@ -28,4 +34,15 @@ public class Retour {
      */
     private Bibliothecaire validePar;
 
+	public String getEtatRendus() {
+		return (this.etatRendus);
+	}
+	
+	public Emprunt getReference() {
+		return (this.emprunt);
+	}
+
+	public Bibliothecaire getEmploye() {
+		return (this.validePar);
+	}
 }

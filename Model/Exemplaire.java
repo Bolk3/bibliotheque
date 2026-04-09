@@ -10,7 +10,11 @@ public class Exemplaire {
     /**
      * Default constructor
      */
-    public Exemplaire() {
+    public Exemplaire(
+			String etat,
+			Oeuvre ref) {
+		this.etat = etat;
+		this.reference = ref;
     }
 
     /**
@@ -18,15 +22,32 @@ public class Exemplaire {
      */
     private String etat;
 
-
     /**
      * 
      */
-    private Set<Emprunt> emprunts;
+    private Vector<Emprunt> emprunts = new Vector<Emprunt>();
 
     /**
      * 
      */
     private Oeuvre reference;
 
+	public void addEmprut(Emprunt e) {
+		if (!(this.emprunts.contains(e))) {
+			this.emprunts.add(e);
+		}
+	}
+
+	public Oeuvre getReference() {
+		return (this.reference);
+	}
+
+	public String getEtat() {
+		return (this.etat);
+	}
+
+	public void setEtat(String e) {
+		this.etat = e;
+	}
+	
 }
