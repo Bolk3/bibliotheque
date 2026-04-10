@@ -1,35 +1,29 @@
 import java.util.*;
 
-/**
- * 
- */
 public class Dvd extends Oeuvre {
 
     /**
-     * Default constructor
-     */
-    public Dvd(
-			String titre,
-			String cote,
-			String editeur,
-			Date dateParution,
-			Bibliotheque handler,
-			String region
-			) {
-		super(titre, cote, editeur, dateParution, handler);
-		this.region = region;
+	 * 
+	 * @param title
+	 * @param category
+	 * @param edithor
+	 * @param pubDate
+	 * @param handler
+	 * @param region
+	 */
+    public Dvd(String title, String category, String edithor, Date pubDate, Bibliotheque handler, String region) {
+		super(title, category, edithor, pubDate, handler);
+		this._region = region;
     }
 
-    /**
-     * 
-     */
-    private String region;
+    private final String _region;
 
-	public String getRegion() {
-		return (this.region);
-	}
-
-	public void setRegion(String r) {
-		this.region = r;
+	/**
+	 * 
+	 * @param region
+	 * @return
+	 */
+	private Boolean isRegion(String region) {
+		return (this._region.equals(region));
 	}
 }

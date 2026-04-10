@@ -1,48 +1,29 @@
-
-import java.io.*;
-import java.util.*;
-
-/**
- * 
- */
 public class Retour {
-
-    /**
-     * Default constructor
-     */
-    public Retour(
-			String etatRendus,
-			Emprunt emprunt,
-			Bibliothecaire validerPar) {
-		this.etatRendus = etatRendus;
-		this.emprunt = emprunt;
-		this.validePar = validerPar;
+  /**
+   * 
+   * @param returnState
+   * @param loan
+   * @param validatedBy
+   */
+    public Retour(String returnState, Emprunt loan, Bibliothecaire validatedBy) {
+		this.returnState = returnState;
+		this.loan = loan;
+		this.validatedBy = validatedBy;
     }
 
-    /**
-     * 
-     */
-    private String etatRendus;
+    final String returnState;
+    final Emprunt loan;
+    final Bibliothecaire validatedBy;
 
-    /**
-     * 
-     */
-    private Emprunt emprunt;
-
-    /**
-     * 
-     */
-    private Bibliothecaire validePar;
-
-	public String getEtatRendus() {
-		return (this.etatRendus);
+	public String getReturnState() {
+		return (this.returnState);
 	}
 	
 	public Emprunt getReference() {
-		return (this.emprunt);
+		return (this.loan);
 	}
 
 	public Bibliothecaire getEmploye() {
-		return (this.validePar);
+		return (this.validatedBy);
 	}
 }

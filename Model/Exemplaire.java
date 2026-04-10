@@ -1,53 +1,56 @@
 
-import java.io.*;
-import java.util.*;
+import java.util.Set;
 
-/**
- * 
- */
 public class Exemplaire {
 
-    /**
-     * Default constructor
-     */
-    public Exemplaire(
-			String etat,
-			Oeuvre ref) {
-		this.etat = etat;
+	/**
+	 * 
+	 * @param state
+	 * @param ref
+	 */
+    public Exemplaire(String state, Oeuvre ref) {
+		this._state = state;
 		this.reference = ref;
     }
 
-    /**
-     * 
-     */
-    private String etat;
+    private String			_state;
+    private Set<Emprunt>	emprunts;
+    private final Oeuvre	reference;
 
-    /**
-     * 
-     */
-    private Vector<Emprunt> emprunts = new Vector<Emprunt>();
-
-    /**
-     * 
-     */
-    private Oeuvre reference;
-
+	/**
+	 * 
+	 */
 	public void addEmprut(Emprunt e) {
 		if (!(this.emprunts.contains(e))) {
 			this.emprunts.add(e);
 		}
 	}
 
-	public Oeuvre getReference() {
+	/**
+	 * 
+	 */
+	public Oeuvre	getReference() {
 		return (this.reference);
 	}
 
-	public String getEtat() {
-		return (this.etat);
+	/**
+	 * 
+	 */
+	public String	getState() {
+		return (this._state);
 	}
 
-	public void setEtat(String e) {
-		this.etat = e;
+	/**
+	 * 
+	 */
+	public void	setEtat(String e) {
+		this._state = e;
 	}
-	
+
+	/**
+	 * 
+	 */
+	public Boolean	isState(String s) {
+		return (this._state.equals(s));
+	}
 }

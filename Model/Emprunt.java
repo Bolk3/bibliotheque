@@ -1,91 +1,61 @@
-
-import java.io.*;
 import java.util.*;
 
-/**
- * 
- */
 public class Emprunt {
 
     /**
-     * Default constructor
+     * 
+     * @param expectedDate
+     * @param validatedBy
+     * @param borowedBy
+     * @param exemplaire
      */
-    public Emprunt(
-			Date prevu,
-			Bibliothecaire valide,
-			Membre emprunteur,
-			Exemplaire exemplaire) {
-		this.dateDebut = new Date();
-		this.datePrevu = prevu;
-		this.dateRendu = null;
-		this.validePar = valide;
-		this.empruntePar = emprunteur;
-		this.exemplaire = exemplaire;
-		this.retour = null;
-		this.etatInitial = this.exemplaire.getEtat();
+    public Emprunt(Date expectedDate, Bibliothecaire validatedBy, Membre borowedBy, Exemplaire exemplaire) {
+		this._startDate = new Date();
+		this.expectedDate = expectedDate;
+		this._validatedBy = validatedBy;
+		this._borrowedBy = borowedBy;
+		this._copy = exemplaire;
+		this._initialState = this._copy.getState();
     }
 
-    /**
-     * 
-     */
-    private Date dateDebut;
+    private final Date      _startDate;
+    private Retour          _returnStamp = null;
+    private Date            _returnDate = null;
+    private Bibliothecaire  _validatedBy;
+    private Membre          _borrowedBy;
+    private Exemplaire      _copy;
+	private String          _initialState;
+    public Date             expectedDate;
 
-    /**
-     * 
-     */
-    private Date datePrevu;
+    private void updateEtat() {
+		if (this.isDamaged()) {
+            this._copy.setEtat(this._returnStamp.getReturnState());
+        }
+	}
 
-    /**
-     * 
-     */
-    private Date dateRendu;
+    public void    extendsDate(Date newDate, Bibliothecaire validatedBy) {
+        this.expectedDate = newDate;
+    }
 
-    /**
-     * 
-     */
-    private Bibliothecaire validePar;
-
-    /**
-     * 
-     */
-    private Membre empruntePar;
-
-    /**
-     * 
-     */
-    private Exemplaire exemplaire;
-
-    /**
-     * 
-     */
-    private Retour retour;
-
-	private String etatInitial;
-
-	public Boolean isLate() {
+	public Boolean  isLate() {
 		Date now = new Date();
 
-		return (now.after(this.datePrevu));
+		return (now.after(this.expectedDate));
 	}
 
-	public Boolean isReturned() {
-		return (this.retour == null);
+	public Boolean  isReturned() {
+		return (this._returnStamp == null);
 	}
 
-	public Boolean isDamaged() {
-		String returnState = this.retour.getEtatRendus();
+	public Boolean  isDamaged() {
+		String returnState = this._returnStamp.getReturnState();
 
-		return (returnState != this.etatInitial);
+		return (returnState.equals(this._initialState));
 	}
 
-	public void updateEtat() {
-		if (this.isDamaged()) {
-			this.exemplaire.setEtat(this.retour.getEtatRendus());
-		}
-	}
-
-	public void returnBook(String etat, Bibliothecaire validerPar) {
-		this.retour = new Retour(etat, this, validePar);
+	public void returnBook(String state, Bibliothecaire validatedBy) {
+        this._returnDate = new Date();
+		this._returnStamp = new Retour(state, this, validatedBy);
 		this.updateEtat();
 	}
 }
