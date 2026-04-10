@@ -2,6 +2,8 @@
 import java.io.*;
 import java.util.*;
 
+// TODO /!\: operateur equals a mettre sinn ca casse 
+
 /**
  * 
  */
