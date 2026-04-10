@@ -26,7 +26,7 @@ public abstract class Oeuvre {
     private final String				_editor;
     private final Date					_publicationDate;
     private final Vector<Exemplaire>	_copies = new Vector<>();
-    private Set<Auteur>					_authors;
+    private Set<Author>					_authors;
     private Set<Evenement>				_evenements;
 	
 	/**
@@ -41,7 +41,7 @@ public abstract class Oeuvre {
 	 * add a new unique author to the set of authors
 	 * @param a - the new author
 	 */
-	public void	addAuthor(Auteur a) {
+	public void	addAuthor(Author a) {
 		this._authors.add(a);
 	}
 
@@ -116,7 +116,7 @@ public abstract class Oeuvre {
 	 * @param author
 	 * @return
 	 */
-	public Boolean isAuthor(Auteur author) {
+	public Boolean isAuthor(Author author) {
 		return (this._authors.contains(author));
 	}
 
