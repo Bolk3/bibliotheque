@@ -1,5 +1,4 @@
 
-import java.io.*;
 import java.util.*;
 
 /**
@@ -13,24 +12,9 @@ public class Bibliothecaire extends Utilisateur {
     public Bibliothecaire() {
     }
 
-    /**
-     * 
-     */
-    private String poste;
-
-    /**
-     * 
-     */
-    private int permision;
-
-    /**
-     * 
-     */
-    private Set<Emprunt> empruntsValide;
-
-    /**
-     * 
-     */
-    private Set<Retour> retoursValide;
+    private String          poste;
+    private int             permision;
+    private Set<Borrow>     empruntsValide;
+    private Set<Stamp>      stampsValidated;
 
 }

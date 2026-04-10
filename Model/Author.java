@@ -12,9 +12,9 @@ public class Author {
         this._authorName = authName;
     }
 
-    private final String _authorSurname;
-    private final String _authorName;
-    private Set<Oeuvre> _Works;
+    private final String    _authorSurname;
+    private final String    _authorName;
+    private Set<Oeuvre>     _Works;
 
     /**
      * 

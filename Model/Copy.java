@@ -1,26 +1,26 @@
 
 import java.util.Set;
 
-public class Exemplaire {
+public class Copy {
 
 	/**
 	 * 
 	 * @param state
 	 * @param ref
 	 */
-    public Exemplaire(String state, Oeuvre ref) {
+    public Copy(String state, Oeuvre ref) {
 		this._state = state;
 		this.reference = ref;
     }
 
     private String			_state;
-    private Set<Emprunt>	emprunts;
+    private Set<Borrow>		emprunts;
     private final Oeuvre	reference;
 
 	/**
 	 * 
 	 */
-	public void addEmprut(Emprunt e) {
+	public void addEmprut(Borrow e) {
 		if (!(this.emprunts.contains(e))) {
 			this.emprunts.add(e);
 		}

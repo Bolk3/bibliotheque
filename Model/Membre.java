@@ -1,5 +1,4 @@
 
-import java.io.*;
 import java.util.*;
 
 /**
@@ -26,7 +25,7 @@ public class Membre extends Utilisateur {
     /**
      * 
      */
-    private Set<Emprunt> emprunts;
+    private Set<Borrow> emprunts;
 
     /**
      * 

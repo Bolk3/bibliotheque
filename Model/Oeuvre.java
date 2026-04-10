@@ -25,7 +25,7 @@ public abstract class Oeuvre {
     private final String				_category;
     private final String				_editor;
     private final Date					_publicationDate;
-    private final Vector<Exemplaire>	_copies = new Vector<>();
+    private final Vector<Copy>	_copies = new Vector<>();
     private Set<Author>					_authors;
     private Set<Evenement>				_evenements;
 	
@@ -49,7 +49,7 @@ public abstract class Oeuvre {
 	 * add a new copy to the vector of copies
 	 * @param e - the new copy
 	 */
-	public void	addExemplaire(Exemplaire e){
+	public void	addExemplaire(Copy e){
 		if (!(this._copies.contains(e))) {
 			this._copies.add(e);
 		}
@@ -92,9 +92,9 @@ public abstract class Oeuvre {
 	 * @param s
 	 * @return
 	 */
-	public Vector<Exemplaire>	getExemplaireByState(String s) {
-		Vector<Exemplaire>	result = new Vector<>();
-		for (Exemplaire e: _copies) {
+	public Vector<Copy>	getExemplaireByState(String s) {
+		Vector<Copy>	result = new Vector<>();
+		for (Copy e: _copies) {
 			if (e.isState(s)) {
 				result.add(e);
 			}		
