@@ -20,11 +20,12 @@ public class Author {
     public Author(String authSurname, String authName) {
         this._authorSurname = authSurname;
         this._authorName = authName;
+        this._works = new HashSet<>();
     }
 
     private final String    _authorSurname;
     private final String    _authorName;
-    private Set<Work>     _Works;
+    private Set<Work>       _works;
 
     /**
      * Returns the author's first name.
@@ -65,7 +66,7 @@ public class Author {
      * * @param w The work to be added to the set.
      */
     public void addWork(Work w) {
-        this._Works.add(w);
+        this._works.add(w);
     }
 
     /**
@@ -73,6 +74,6 @@ public class Author {
      * * @return A {@link Set} containing all works associated with the author.
      */
     public Set<Work> getWorks() {
-        return (this._Works);
+        return (this._works);
     }
 }

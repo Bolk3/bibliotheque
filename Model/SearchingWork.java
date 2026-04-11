@@ -27,7 +27,7 @@ public class SearchingWork {
         Vector<Dvd>    result = new Vector<>();
 
         if (region == null || region.length() < 3) {
-            throw new SearchStringTooSmall("your shearch field is too small");
+            throw new SearchStringTooSmall("querry is too small");
         }
         for (Work em: list) {
             if (em instanceof Dvd d && d.isRegion(region)) {
@@ -46,7 +46,7 @@ public class SearchingWork {
      */
     public static Book searchByIsbn(Set<Work> list, String isbn) throws SearchStringTooSmall {
         if (isbn == null || isbn.length() < 3) {
-            throw new SearchStringTooSmall("your shearch field is too small");
+            throw new SearchStringTooSmall("querry is too small");
         }
         for (Work em: list) {
             if (em instanceof Book l && l.isIsbn(isbn)) {
@@ -69,11 +69,12 @@ public class SearchingWork {
      */
     public static Vector<Work>    search(Set<Work> list, String querry, Function<Work, String> exctractor) throws SearchStringTooSmall {
         Vector<Work>  result = new Vector<>();
-        String          search = querry.trim().toLowerCase();
+        String        search;
 
-        if (search == null || search.length() < 3) {
+        if (querry == null || querry.length() < 3) {
             throw new SearchStringTooSmall("querry too small");
         }
+        search = querry.trim().toLowerCase();
         for (Work em: list) {
             String  value = exctractor.apply(em);
             if (value != null && value.toLowerCase().contains(search)) {
@@ -92,7 +93,7 @@ public class SearchingWork {
     public static Vector<Work>    searchByPubDate(Set<Work> list, Date pubDate) {
         Vector<Work>  result = new Vector<>();
         for (Work em: list) {
-            if (em.getPublicationDate() == pubDate) {
+            if (em.getPublicationDate().equals(pubDate)) {
                 result.add(em);
             }
         }
@@ -108,9 +109,15 @@ public class SearchingWork {
      * @throws SearchClassNotInherits If the target type does not extend {@link Work}.
      */
     public static <T extends Work> Vector<T> searchByType(Set<Work> list, Class<T> targetType) throws SearchClassNotInherits{
-        Vector<T>   result = new Vector<>();
-        if (!(Work.class.isAssignableFrom(targetType))) {
-            throw new SearchClassNotInherits(null);
+        Vector<T> result = new Vector<>();
+        if (targetType == null) {
+            throw new SearchClassNotInherits("Target type cannot be null");
+        }
+        if (!Work.class.isAssignableFrom(targetType)) {
+            throw new SearchClassNotInherits("The class " + targetType.getSimpleName() + " does not inherit from Work");
+        }
+        if (list == null) {
+            return result;
         }
         for (Work em : list) {
             if (targetType.isInstance(em)) {

@@ -1,4 +1,5 @@
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
@@ -28,16 +29,18 @@ public abstract class Work {
 		this._editor = editor;
 		this._publicationDate = pubDate;
 		this._handler = handler;
+		this._authors = new HashSet<>();
+		this._evenements = new HashSet<>();
     }
 
-    private final Bibliotheque			_handler;
-    private final String				_title;
-    private final String				_category;
-    private final String				_editor;
-    private final Date					_publicationDate;
-    private final Vector<Copy>			_copies = new Vector<>();
-    private Set<Author>					_authors;
-    private Set<Evenement>				_evenements;
+    private final Bibliotheque		_handler;
+    private final String			_title;
+    private final String			_category;
+    private final String			_editor;
+    private final Date				_publicationDate;
+    private final Vector<Copy>		_copies = new Vector<>();
+    private final Set<Author>		_authors;
+    private final Set<Evenement>	_evenements;
 	
 	/**
      * Records a new unique event associated with this work.

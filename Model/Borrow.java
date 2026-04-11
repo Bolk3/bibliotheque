@@ -1,4 +1,5 @@
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -26,6 +27,7 @@ public class Borrow {
 		this._borrowedBy = borowedBy;
 		this._copy = copy;
 		this._initialState = this._copy.getState();
+        this._extentions = new HashSet<>();
     }
 
     private final Date              _startDate;
@@ -74,7 +76,7 @@ public class Borrow {
      * @return {@code true} if a return stamp exists; {@code false} otherwise.
      */
 	public Boolean  isReturned() {
-		return (this._returnStamp == null);
+		return (this._returnStamp != null);
 	}
 
     /**
@@ -85,7 +87,7 @@ public class Borrow {
 	public Boolean  isDamaged() {
 		String returnState = this._returnStamp.getReturnState();
 
-		return (returnState.equals(this._initialState));
+		return (!returnState.equals(this._initialState));
 	}
 
     /**

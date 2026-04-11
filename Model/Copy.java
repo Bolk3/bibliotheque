@@ -1,4 +1,5 @@
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -21,20 +22,19 @@ public class Copy {
     public Copy(String state, Work ref) {
 		this._state = state;
 		this.reference = ref;
+          this._borrowing = new HashSet<>();
     }
 
     private final Work		reference;
+    private final Set<Borrow>	_borrowing;
     private String			_state;
-    private Set<Borrow>		_Borrowing;
 
 	/**
      * Records a new borrowing transaction for this copy.
      * * @param e The {@link Borrow} transaction to add.
      */
 	public void addBorrowing(Borrow e) {
-		if (!(this._Borrowing.contains(e))) {
-			this._Borrowing.add(e);
-		}
+          this._borrowing.add(e);
 	}
 
 	/**
