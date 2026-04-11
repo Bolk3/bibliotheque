@@ -20,8 +20,18 @@ public class Livre extends Oeuvre {
 
     /**
      * 
+     * @return
      */
     public String   getIsbn() {
         return (this._isbn);
+    }
+
+    /**
+     * 
+     * @param s
+     * @return
+     */
+    public Boolean  isIsbn(String s) {
+        return (this._isbn.equals(s));
     }
 }

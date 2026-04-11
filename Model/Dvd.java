@@ -23,7 +23,7 @@ public class Dvd extends Oeuvre {
 	 * @param region
 	 * @return
 	 */
-	private Boolean isRegion(String region) {
+	public Boolean isRegion(String region) {
 		return (this._region.equals(region));
 	}
 }
