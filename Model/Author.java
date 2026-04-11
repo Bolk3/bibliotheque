@@ -1,11 +1,21 @@
 import java.util.*;
 
+/**
+ * Represents an author within the library system.
+ * <p>
+ * This class maintains the author's identity and tracks the collection 
+ * of works they have contributed to.
+ * </p>
+ *
+ * @version 1.0
+ */
 public class Author {
 
     /**
-     * 
-     * @param authSurname   Surname of the author
-     * @param authName      Name of the author
+     * Constructs a new Author with a specified name and surname.
+     * Initializes an empty set of works.
+     * * @param authSurname Surname of the author.
+     * @param authName    First name of the author.
      */
     public Author(String authSurname, String authName) {
         this._authorSurname = authSurname;
@@ -17,50 +27,50 @@ public class Author {
     private Set<Work>     _Works;
 
     /**
-     * Returns the author name
-     * @return  The author name
+     * Returns the author's first name.
+     * * @return The first name string.
      */
     public String getName() {
         return (this._authorName);
     }
 
     /**
-     * Returns the author surname
-     * @return  The author Surname
+     * Returns the author's surname.
+     * * @return The surname string.
      */
     public String getSurname() {
         return (this._authorSurname);
     }
 
     /**
-     * Verify if a string is the name of the author
-     * @param n String to check
-     * @return  Boolean checking if n is the name of the author
+     * Verifies if the provided string matches the author's first name.
+     * * @param n The string to check.
+     * @return {@code true} if the name matches; {@code false} otherwise.
      */
     public Boolean  isName(String n) {
         return (this._authorName.equals(n));
     }
 
     /**
-     * Verify if a string is the surname of the author
-     * @param n String to check
-     * @return  Boolean checking if n is the surname of the author
+     * Verifies if the provided string matches the author's surname.
+     * * @param n The string to check.
+     * @return {@code true} if the surname matches; {@code false} otherwise.
      */
     public Boolean  isSurname(String n) {
         return (this._authorSurname.equals(n));
     }
 
     /**
-     * Adds a new unique work to the author credit
-     * @param w A work that hasn't already been added to the set
+     * Adds a new unique work to the author's bibliography.
+     * * @param w The work to be added to the set.
      */
     public void addWork(Work w) {
         this._Works.add(w);
     }
 
     /**
-     * Get all works the author was credited on
-     * @return  A Set of all works the author was credited on
+     * Returns the complete set of works credited to this author.
+     * * @return A {@link Set} containing all works associated with the author.
      */
     public Set<Work> getWorks() {
         return (this._Works);
