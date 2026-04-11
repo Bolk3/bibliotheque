@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Dvd extends Oeuvre {
+public class Dvd extends Work {
 
     /**
 	 * 

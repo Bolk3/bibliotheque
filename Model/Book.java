@@ -1,6 +1,6 @@
 import java.util.Date;
 
-public class Livre extends Oeuvre {
+public class Book extends Work {
 
     /**
      * 
@@ -11,7 +11,7 @@ public class Livre extends Oeuvre {
      * @param dateParution
      * @param reference
      */
-    public Livre(String isbn, String title, String cote, String editor, Date dateParution, Bibliotheque reference) {
+    public Book(String isbn, String title, String cote, String editor, Date dateParution, Bibliotheque reference) {
         super(title, cote, editor, dateParution, reference);
         this._isbn = isbn;
     }

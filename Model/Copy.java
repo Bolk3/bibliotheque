@@ -8,28 +8,28 @@ public class Copy {
 	 * @param state
 	 * @param ref
 	 */
-    public Copy(String state, Oeuvre ref) {
+    public Copy(String state, Work ref) {
 		this._state = state;
 		this.reference = ref;
     }
 
+    private final Work		reference;
     private String			_state;
-    private Set<Borrow>		emprunts;
-    private final Oeuvre	reference;
+    private Set<Borrow>		_Borrowing;
 
 	/**
 	 * 
 	 */
 	public void addEmprut(Borrow e) {
-		if (!(this.emprunts.contains(e))) {
-			this.emprunts.add(e);
+		if (!(this._Borrowing.contains(e))) {
+			this._Borrowing.add(e);
 		}
 	}
 
 	/**
 	 * 
 	 */
-	public Oeuvre	getReference() {
+	public Work	getReference() {
 		return (this.reference);
 	}
 

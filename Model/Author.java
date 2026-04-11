@@ -4,8 +4,8 @@ public class Author {
 
     /**
      * 
-     * @param authSurname
-     * @param authName
+     * @param authSurname   Surname of the author
+     * @param authName      Name of the author
      */
     public Author(String authSurname, String authName) {
         this._authorSurname = authSurname;
@@ -14,55 +14,55 @@ public class Author {
 
     private final String    _authorSurname;
     private final String    _authorName;
-    private Set<Oeuvre>     _Works;
+    private Set<Work>     _Works;
 
     /**
-     * 
-     * @return
+     * Returns the author name
+     * @return  The author name
      */
     public String getName() {
         return (this._authorName);
     }
 
     /**
-     * 
-     * @return
+     * Returns the author surname
+     * @return  The author Surname
      */
     public String getSurname() {
         return (this._authorSurname);
     }
 
     /**
-     * 
-     * @param n
-     * @return
+     * Verify if a string is the name of the author
+     * @param n String to check
+     * @return  Boolean checking if n is the name of the author
      */
     public Boolean  isName(String n) {
         return (this._authorName.equals(n));
     }
 
     /**
-     * 
-     * @param n
-     * @return
+     * Verify if a string is the surname of the author
+     * @param n String to check
+     * @return  Boolean checking if n is the surname of the author
      */
     public Boolean  isSurname(String n) {
         return (this._authorSurname.equals(n));
     }
 
     /**
-     * 
-     * @param w
+     * Adds a new unique work to the author credit
+     * @param w A work that hasn't already been added to the set
      */
-    public void addWork(Oeuvre w) {
+    public void addWork(Work w) {
         this._Works.add(w);
     }
 
     /**
-     * 
-     * @return
+     * Get all works the author was credited on
+     * @return  A Set of all works the author was credited on
      */
-    public Set<Oeuvre> getWorks() {
+    public Set<Work> getWorks() {
         return (this._Works);
     }
 }
