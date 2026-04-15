@@ -1,4 +1,4 @@
-package errors;
+package Model.errors;
 
 /**
  * Exception thrown when a search query string does not meet the minimum length requirements.

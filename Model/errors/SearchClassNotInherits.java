@@ -1,4 +1,4 @@
-package errors;
+package Model.errors;
 
 /**
  * Exception thrown when a search operation is attempted using a class type 

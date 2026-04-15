@@ -1,3 +1,4 @@
+package Model;
 import errors.SearchClassNotInherits;
 import errors.SearchStringTooSmall;
 import java.util.Date;
