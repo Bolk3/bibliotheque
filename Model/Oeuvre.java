@@ -1,4 +1,5 @@
-package Model;
+
+import java.io.*;
 import java.util.*;
 
 /**
@@ -51,7 +52,5 @@ public abstract class Oeuvre {
      * 
      */
     private Set<Evenement> supports;
-
-    private String  imageUrl;
 
 }
