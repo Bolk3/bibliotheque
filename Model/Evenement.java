@@ -1,3 +1,4 @@
+package Model;
 
 import java.io.*;
 import java.util.*;
@@ -31,7 +32,7 @@ public class Evenement {
     /**
      * 
      */
-    private Set<Oeuvre> evenements;
+    private Set<Work> evenements;
 
     /**
      * 
