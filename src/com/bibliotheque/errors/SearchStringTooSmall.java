@@ -1,4 +1,4 @@
-package Model.errors;
+package com.bibliotheque.erreurs;
 
 /**
  * Exception thrown when a search query string does not meet the minimum length requirements.
