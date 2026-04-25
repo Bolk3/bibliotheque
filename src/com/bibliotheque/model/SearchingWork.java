@@ -1,130 +1,224 @@
-package Model;
-import errors.SearchClassNotInherits;
-import errors.SearchStringTooSmall;
+package com.bibliotheque.model;
+
+import com.bibliotheque.erreur.SearchClassNotInherits;
+import com.bibliotheque.erreur.SearchStringTooSmall;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.Vector;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
- * Utility class providing static methods to filter and search through collections of {@link Work}.
- * <p>
- * This class supports various search strategies, including specific attribute filtering 
- * (ISBN, Region), functional extraction for flexible string searches, and type-based filtering.
- * </p>
+ * Utility class providing static methods to filter and search through
+ * collections of {@link Work}.
  *
- * 
- * @version 1.0
+ * <p>This class supports several search strategies:</p>
+ * <ul>
+ *   <li>Type-specific attribute filtering — ISBN for {@link Book},
+ *       region code for {@link Dvd}</li>
+ *   <li>Functional string extraction — flexible case-insensitive search
+ *       on any {@link Work} attribute via a {@link Function} extractor</li>
+ *   <li>Publication date filtering</li>
+ *   <li>Runtime type filtering via {@link #searchByType(Set, Class)}</li>
+ * </ul>
+ *
+ * <p>All methods are {@code static} — this class is not meant to be
+ * instantiated.</p>
+ *
+ * <p>String-based search methods enforce a minimum query length of 3
+ * characters and throw {@link SearchStringTooSmall} otherwise, to prevent
+ * overly broad searches.</p>
+ *
+ * @see Work
+ * @see Book
+ * @see Dvd
+ * @see SearchStringTooSmall
+ * @see SearchClassNotInherits
+ *
+ * @version 1.1
  */
 public class SearchingWork {
-    /**
-     * Searches through a Set of Works and filters for DVDs matching a specific region.
-     * @param list      Set of unique {@link Work} elements to search through.
-     * @param region    The region code to match.
-     * @return          A {@link Vector} of {@link Dvd} objects that match the region.
-     * @throws          SearchStringTooSmall If the region string is null or shorter than 3 characters.
-     */
-    public static Vector<Dvd> searchByRegion(Set<Work> list, String region) throws SearchStringTooSmall {
-        Vector<Dvd>    result = new Vector<>();
 
-        if (region == null || region.length() < 3) {
-            throw new SearchStringTooSmall("querry is too small");
-        }
-        for (Work em: list) {
-            if (em instanceof Dvd d && d.isRegion(region)) {
-                result.add(d);
-            }
-        }
-        return (result);
+    /**
+     * Private constructor — this class is a static utility and should
+     * never be instantiated.
+     */
+    private SearchingWork() {}
+
+    // -------------------------------------------------------------------------
+    // Type-specific searches
+    // -------------------------------------------------------------------------
+
+    /**
+     * Filters a set of works for {@link Dvd} instances matching a specific
+     * region code.
+     *
+     * <p>Only elements that are instances of {@link Dvd} and whose region
+     * code matches {@code region} exactly are included in the result.</p>
+     *
+     * @param catalogue the set of {@link Work}s to search through;
+     *                  must not be {@code null}
+     * @param region    the region code to match; must not be {@code null}
+     *                  and must be at least 3 characters long
+     * @return a {@link List} of {@link Dvd}s matching the region code;
+     *         never {@code null}, but may be empty
+     *
+     * @throws SearchStringTooSmall if {@code region} is {@code null} or
+     *                              shorter than 3 characters
+     */
+    public static List<Dvd> searchByRegion(Set<Work> catalogue, String region)
+            throws SearchStringTooSmall {
+        if (region == null || region.length() < 3)
+            throw new SearchStringTooSmall("Query is too small.");
+        return catalogue.stream()
+                .filter(w -> w instanceof Dvd)
+                .map(w -> (Dvd) w)
+                .filter(d -> d.isRegion(region))
+                .collect(Collectors.toList());
     }
 
     /**
-     * Searches through a Set of Works for a specific Book by its ISBN.
-     * @param list  Set of unique {@link Work} elements to search through.
-     * @param isbn  The ISBN identifier to match.
-     * @return      The matching {@link Book} instance, or {@code null} if no match is found.
-     * @throws      SearchStringTooSmall If the ISBN string is null or shorter than 3 characters.
+     * Searches a set of works for a {@link Book} matching a specific ISBN.
+     *
+     * <p>Since an ISBN uniquely identifies a book edition, at most one result
+     * is expected. The result is wrapped in an {@link Optional} to avoid
+     * returning {@code null}.</p>
+     *
+     * @param catalogue the set of {@link Work}s to search through;
+     *                  must not be {@code null}
+     * @param isbn      the ISBN identifier to match; must not be {@code null}
+     *                  and must be at least 3 characters long
+     * @return an {@link Optional} containing the matching {@link Book},
+     *         or {@link Optional#empty()} if no match is found
+     *
+     * @throws SearchStringTooSmall if {@code isbn} is {@code null} or
+     *                              shorter than 3 characters
      */
-    public static Book searchByIsbn(Set<Work> list, String isbn) throws SearchStringTooSmall {
-        if (isbn == null || isbn.length() < 3) {
-            throw new SearchStringTooSmall("querry is too small");
-        }
-        for (Work em: list) {
-            if (em instanceof Book l && l.isIsbn(isbn)) {
-                return (l);
-            }
-        }
-        return (null);
+    public static Optional<Book> searchByIsbn(Set<Work> catalogue, String isbn)
+            throws SearchStringTooSmall {
+        if (isbn == null || isbn.length() < 3)
+            throw new SearchStringTooSmall("Query is too small.");
+        return catalogue.stream()
+                .filter(w -> w instanceof Book)
+                .map(w -> (Book) w)
+                .filter(b -> b.isIsbn(isbn))
+                .findFirst();
     }
 
-    /**
-     * Performs a flexible string-based search using a functional extractor.
-     * <p>
-     * The search is case-insensitive and ignores leading/trailing whitespace.
-     * </p>
-     * @param list      Set of unique {@link Work} elements to search through.
-     * @param query     The search string.
-     * @param extractor A {@link Function} that defines which attribute of the Work to search (e.g., Work::getTitle).
-     * @return          A {@link Vector} of {@link Work} objects containing the query string.
-     * @throws          SearchStringTooSmall If the query (after trimming) is null or shorter than 3 characters.
-     */
-    public static Vector<Work>    search(Set<Work> list, String querry, Function<Work, String> exctractor) throws SearchStringTooSmall {
-        Vector<Work>  result = new Vector<>();
-        String        search;
+    // -------------------------------------------------------------------------
+    // Generic attribute search
+    // -------------------------------------------------------------------------
 
-        if (querry == null || querry.length() < 3) {
-            throw new SearchStringTooSmall("querry too small");
-        }
-        search = querry.trim().toLowerCase();
-        for (Work em: list) {
-            String  value = exctractor.apply(em);
-            if (value != null && value.toLowerCase().contains(search)) {
-                result.add(em);
-            }
-        }
-        return (result);
+    /**
+     * Performs a flexible, case-insensitive string search on any attribute
+     * of a {@link Work}, using a functional extractor to select which field
+     * to search.
+     *
+     * <p>The query is trimmed and lowercased before comparison. A work is
+     * included in the result if the extracted value contains the query as a
+     * substring. Works for which the extractor returns {@code null} are
+     * silently skipped.</p>
+     *
+     * <p>Example usage:</p>
+     * <pre>{@code
+     * // Search by title
+     * SearchingWork.search(catalogue, "hobbit", Work::getTitle);
+     *
+     * // Search by editor
+     * SearchingWork.search(catalogue, "gallimard", Work::getEditor);
+     * }</pre>
+     *
+     * @param catalogue the set of {@link Work}s to search through;
+     *                  must not be {@code null}
+     * @param query     the search string; must not be {@code null} and must
+     *                  be at least 3 characters long after trimming
+     * @param extractor a {@link Function} that extracts the string attribute
+     *                  to search from each {@link Work} (e.g.
+     *                  {@code Work::getTitle}, {@code Work::getEditor});
+     *                  must not be {@code null}
+     * @return a {@link List} of {@link Work}s whose extracted attribute
+     *         contains the query; never {@code null}, but may be empty
+     *
+     * @throws SearchStringTooSmall if {@code query} is {@code null} or
+     *                              shorter than 3 characters
+     */
+    public static List<Work> search(Set<Work> catalogue, String query,
+                                    Function<Work, String> extractor)
+            throws SearchStringTooSmall {
+        if (query == null || query.trim().length() < 3)
+            throw new SearchStringTooSmall("Query is too small.");
+        String search = query.trim().toLowerCase();
+        return catalogue.stream()
+                .filter(w -> {
+                    String value = extractor.apply(w);
+                    return value != null && value.toLowerCase().contains(search);
+                })
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Filters a Set of Works based on their publication date.
-     * @param list    Set of unique {@link Work} elements to search through.
-     * @param pubDate The exact {@link Date} of publication to match.
-     * @return        A {@link Vector} of works published on that exact date.
-     */
-    public static Vector<Work>    searchByPubDate(Set<Work> list, Date pubDate) {
-        Vector<Work>  result = new Vector<>();
-        for (Work em: list) {
-            if (em.getPublicationDate().equals(pubDate)) {
-                result.add(em);
-            }
-        }
-        return (result);
-    }
+    // -------------------------------------------------------------------------
+    // Date search
+    // -------------------------------------------------------------------------
 
     /**
-     * Filters a collection of works by their specific class type.
-     * @param <T>        The specific subtype of {@link Work} to return.
-     * @param list       Set of unique {@link Work} elements to search through.
-     * @param targetType The class literal (e.g., Dvd.class) to filter by.
-     * @return           A {@link Vector} containing only instances of the target type.
-     * @throws SearchClassNotInherits If the target type does not extend {@link Work}.
+     * Filters a set of works by their exact publication date.
+     *
+     * <p>Comparison uses {@link Date#equals(Object)}, so the provided date
+     * must match down to the millisecond. For broader date ranges, consider
+     * implementing a range-based overload.</p>
+     *
+     * @param catalogue the set of {@link Work}s to search through;
+     *                  must not be {@code null}
+     * @param pubDate   the exact publication date to match;
+     *                  must not be {@code null}
+     * @return a {@link List} of {@link Work}s published on that exact date;
+     *         never {@code null}, but may be empty
      */
-    public static <T extends Work> Vector<T> searchByType(Set<Work> list, Class<T> targetType) throws SearchClassNotInherits{
-        Vector<T> result = new Vector<>();
-        if (targetType == null) {
-            throw new SearchClassNotInherits("Target type cannot be null");
-        }
-        if (!Work.class.isAssignableFrom(targetType)) {
-            throw new SearchClassNotInherits("The class " + targetType.getSimpleName() + " does not inherit from Work");
-        }
-        if (list == null) {
-            return result;
-        }
-        for (Work em : list) {
-            if (targetType.isInstance(em)) {
-                result.add(targetType.cast(em));
-            }
-        }
-        return(result);
+    public static List<Work> searchByPubDate(Set<Work> catalogue, Date pubDate) {
+        return catalogue.stream()
+                .filter(w -> w.getPublicationDate().equals(pubDate))
+                .collect(Collectors.toList());
+    }
+
+    // -------------------------------------------------------------------------
+    // Type filtering
+    // -------------------------------------------------------------------------
+
+    /**
+     * Filters a set of works by their runtime type, returning only instances
+     * of the specified subclass of {@link Work}.
+     *
+     * <p>The generic bound {@code <T extends Work>} ensures at compile time
+     * that only valid subtypes of {@link Work} can be passed as
+     * {@code targetType}.</p>
+     *
+     * <p>Example usage:</p>
+     * <pre>{@code
+     * List<Dvd>  dvds  = SearchingWork.searchByType(catalogue, Dvd.class);
+     * List<Book> books = SearchingWork.searchByType(catalogue, Book.class);
+     * }</pre>
+     *
+     * @param <T>        the specific subtype of {@link Work} to return
+     * @param catalogue  the set of {@link Work}s to search through;
+     *                   must not be {@code null}
+     * @param targetType the {@link Class} literal of the desired subtype
+     *                   (e.g. {@code Dvd.class}, {@code Book.class});
+     *                   must not be {@code null}
+     * @return a {@link List} containing only instances of {@code targetType};
+     *         never {@code null}, but may be empty
+     *
+     * @throws SearchClassNotInherits if {@code targetType} is {@code null}
+     */
+    public static <T extends Work> List<T> searchByType(Set<Work> catalogue,
+                                                         Class<T> targetType)
+            throws SearchClassNotInherits {
+        if (targetType == null)
+            throw new SearchClassNotInherits("Target type cannot be null.");
+        return catalogue.stream()
+                .filter(targetType::isInstance)
+                .map(targetType::cast)
+                .collect(Collectors.toList());
     }
 }
