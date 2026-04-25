@@ -1,39 +1,75 @@
-package Model;
+package com.bibliotheque.model;
+
 import java.util.Date;
 
 /**
- * Represents a record of a loan duration extension.
- * <p>
- * This class extends {@link Stamp} to log when a borrowing period was 
- * officially extended by a librarian and what the new due date is.
- * </p>
+ * Represents a formal record of a borrowing period extension.
  *
- * @version 1.0
+ * <p>An {@code ExtensionStamp} is created each time a librarian officially
+ * extends the due date of an active {@link Borrow} transaction. It extends
+ * {@link Stamp} to inherit the core audit fields (timestamp, validator, borrow
+ * reference) and adds the new due date that was granted.</p>
+ *
+ * <p>The processing timestamp is captured automatically from the system clock
+ * at construction — it reflects the moment the extension was recorded, not
+ * the new due date itself.</p>
+ *
+ * <p>A single {@link Borrow} may accumulate multiple {@code ExtensionStamp}
+ * instances over its lifetime, each representing one granted extension.
+ * The full history is accessible via {@link Borrow#getExtensions()}.</p>
+ *
+ * @see Stamp
+ * @see ReturnStamp
+ * @see Borrow
+ * @see Bibliothecaire
+ *
+ * @version 1.1
  */
-public class ExtensionStamp extends Stamp{
+public class ExtensionStamp extends Stamp {
+
+    private final Date _extensionDate;
+
     /**
-     * Constructs an extension record.
-     * <p>
-     * The super constructor is called with {@code new Date()} to record 
-     * the exact moment this extension was processed.
-     * </p>
-     * @param extendedDate The new due date for the borrowed copy.
-     * @param validatedBy  The librarian who authorized the extension.
-     * @param reference    The {@link Borrow} transaction this extension applies to.
-     * @see Stamp
+     * Constructs a new {@code ExtensionStamp}, capturing the current system
+     * time as the moment the extension was processed.
+     *
+     * <p>This constructor is typically called from
+     * {@link Borrow#extendsDate(Date, Bibliothecaire)} and should not need
+     * to be instantiated directly elsewhere.</p>
+     *
+     * @param extensionDate the new due date granted by this extension;
+     *                      must be strictly after the previous expected return
+     *                      date — this is enforced by
+     *                      {@link Borrow#extendsDate(Date, Bibliothecaire)}
+     *                      before this stamp is created; must not be {@code null}
+     * @param validatedBy   the {@link Bibliothecaire} who authorised the
+     *                      extension; must not be {@code null}
+     * @param reference     the {@link Borrow} transaction this extension
+     *                      applies to; must not be {@code null}
      */
-    public ExtensionStamp(Date extendedDate, Bibliothecaire validatedBy, Borrow reference) {
+    public ExtensionStamp(Date extensionDate, Bibliothecaire validatedBy, Borrow reference) {
         super(new Date(), validatedBy, reference);
-        this._extentionDate = extendedDate;
+        this._extensionDate = extensionDate;
     }
 
-    private final Date  _extentionDate;
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
 
     /**
-     * Returns the new due date associated with this extension.
-     * @return The new {@link Date} assigned to the loan.
+     * Returns the new due date granted by this extension.
+     *
+     * <p>A defensive copy is returned to prevent external mutation of the
+     * internal date, since {@link Date} is mutable.</p>
+     *
+     * <p>Note that this date is distinct from the stamp's processing timestamp
+     * returned by {@link #getTimestamp()} — the timestamp records <em>when</em>
+     * the extension was processed, while this date records <em>until when</em>
+     * the loan was extended.</p>
+     *
+     * @return a copy of the new due date; never {@code null}
      */
-    public Date getExtentionDate() {
-        return (this._extentionDate);
+    public Date getExtensionDate() {
+        return new Date(this._extensionDate.getTime());
     }
 }
