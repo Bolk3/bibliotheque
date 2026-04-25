@@ -1,7 +1,7 @@
 <h1 align="center">System de Gestion de Bibliotheque</h1>
 
 <p align="center">
-    <a><img src="https://img.shields.io/gitea/last-commit/Bolk3/bibliotheque?style=for-the-badge"/></a>
+    <a><img src="https://img.shields.io/github/commit-activity/w/Bolk3/bibliotheque?style=for-the-badge&logo=github"/></a>
     <a><img src="https://img.shields.io/badge/progression-25%25-green?style=for-the-badge"/></a>
 </p>
 
