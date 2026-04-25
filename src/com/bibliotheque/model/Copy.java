@@ -1,4 +1,7 @@
 package com.bibliotheque.model;
+
+import com.bibliotheque.model.State;
+import com.bibliotheque.model.Borrow;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,60 +16,57 @@ import java.util.Set;
  */
 public class Copy {
 
+    private final Work	_reference;
+    private Set<Borrow>	_borrowing = new HashSet<>();
+    private State       _state;
+
 	/**
      * Constructs a new Copy of a work with an initial physical state.
      *
      * @param state The initial condition of the copy (e.g., "New", "Good", "Damaged").
      * @param ref   The {@link Work} this copy refers to.
      */
-    public Copy(String state, Work ref) {
+    public Copy(State state, Work ref) {
 		this._state = state;
 		this.reference = ref;
-          this._borrowing = new HashSet<>();
     }
-
-    private final Work		reference;
-    private final Set<Borrow>	_borrowing;
-    private String			_state;
 
 	/**
      * Records a new borrowing transaction for this copy.
      * * @param e The {@link Borrow} transaction to add.
      */
-	public void addBorrowing(Borrow e) {
-          this._borrowing.add(e);
-	}
+	public void addBorrowing(Borrow e) { this._borrowing.add(e); }
 
 	/**
      * Returns the work that this physical copy represents.
      * * @return The associated {@link Work} instance.
      */
-	public Work	getReference() {
-		return (this.reference);
-	}
+	public Work	getReference() { return (this.reference); }
 
 	/**
-     * Returns the current physical state of the copy.
+     * Returns the current physical State of the copy.
      * * @return A string describing the current condition.
      */
-	public String	getState() {
-		return (this._state);
-	}
+	public State	getState() { return (this._state); }
 
 	/**
      * Updates the physical state of the copy (e.g., after a return).
      * * @param e The new state string.
      */
-	public void	setEtat(String e) {
-		this._state = e;
-	}
+	public void	setEtat(State e) { this._state = e; }
 
 	/**
      * Checks if the copy's current state matches the provided string.
      * * @param s The state string to compare against.
      * @return {@code true} if the states match exactly; {@code false} otherwise.
      */
-	public Boolean	isState(String s) {
-		return (this._state.equals(s));
-	}
+	public Boolean	isState(State s) { return s == this._state; }
+
+    public Boolean  isDisponible() {
+        Borrow[]    arrCopy = new Borrow[this._borrowing.size()];
+        Borrow      latest;
+
+        this._borrowing.toArray(arrCopy);
+        
+    }
 }

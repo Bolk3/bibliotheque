@@ -15,6 +15,15 @@ import java.util.Vector;
  */
 public abstract class Work {
 
+    private final Bibliotheque		_handler;
+    private final String			_title;
+    private final String			_category;
+    private final String			_editor;
+    private final Date				_publicationDate;
+    private final Vector<Copy>		_copies = new Vector<>();
+    private final Set<Author>		_authors;
+    private final Set<Evenement>	_evenements;
+
 	/**
      * Constructs the fundamental metadata for any library work.
      *
@@ -34,15 +43,6 @@ public abstract class Work {
 		this._evenements = new HashSet<>();
     }
 
-    private final Bibliotheque		_handler;
-    private final String			_title;
-    private final String			_category;
-    private final String			_editor;
-    private final Date				_publicationDate;
-    private final Vector<Copy>		_copies = new Vector<>();
-    private final Set<Author>		_authors;
-    private final Set<Evenement>	_evenements;
-	
 	/**
      * Records a new unique event associated with this work.
      * * @param e The {@link Evenement} to be added.
