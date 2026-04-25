@@ -1,72 +1,185 @@
 package com.bibliotheque.model;
 
-import com.bibliotheque.model.State;
-import com.bibliotheque.model.Borrow;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
  * Represents a physical copy of a specific {@link Work}.
- * <p>
- * This class manages the current physical condition (state) of the copy
- * and maintains a history of all borrowing transactions associated with it.
- * </p>
  *
- * @version 1.0
+ * <p>A {@code Copy} is a concrete, borrowable instance of a {@link Work}. It tracks
+ * the copy's current physical condition via a {@link State}, and maintains a complete
+ * history of all associated {@link Borrow} transactions.</p>
+ *
+ * <p>At most one {@link Borrow} may be active at any given time. Attempting to add
+ * a new borrowing while the copy is unavailable will throw an
+ * {@link IllegalStateException}. Use {@link #isAvailable()} to check availability
+ * before calling {@link #addBorrowing(Borrow)}.</p>
+ *
+ * @see Work
+ * @see Borrow
+ * @see State
+ *
+ * @version 1.1
  */
 public class Copy {
 
-    private final Work	_reference;
-    private Set<Borrow>	_borrowing = new HashSet<>();
-    private State       _state;
+    private final Work      _reference;
+    private Set<Borrow>     _borrowings = new HashSet<>();
+    private State           _state;
 
-	/**
-     * Constructs a new Copy of a work with an initial physical state.
+    /**
+     * Constructs a new {@code Copy} of a work with an initial physical condition.
      *
-     * @param state The initial condition of the copy (e.g., "New", "Good", "Damaged").
-     * @param ref   The {@link Work} this copy refers to.
+     * @param state the initial condition of the copy (e.g., {@code State.NEW},
+     *              {@code State.GOOD}, {@code State.DAMAGED}); must not be {@code null}
+     * @param ref   the {@link Work} this copy is an instance of;
+     *              must not be {@code null}
      */
     public Copy(State state, Work ref) {
-		this._state = state;
-		this.reference = ref;
+        this._state     = state;
+        this._reference = ref;
     }
 
-	/**
+    // -------------------------------------------------------------------------
+    // Mutators
+    // -------------------------------------------------------------------------
+
+    /**
      * Records a new borrowing transaction for this copy.
-     * * @param e The {@link Borrow} transaction to add.
+     *
+     * <p>The copy must be available (i.e., no active borrow) before a new
+     * transaction can be added. Use {@link #isAvailable()} to verify first.</p>
+     *
+     * @param borrow the {@link Borrow} transaction to record;
+     *               must not be {@code null}
+     *
+     * @throws IllegalStateException if the copy is already borrowed and
+     *                               has not yet been returned
      */
-	public void addBorrowing(Borrow e) { this._borrowing.add(e); }
+    public void addBorrowing(Borrow borrow) throws IllegalStateException {
+        if (!this.isAvailable())
+            throw new IllegalStateException("Copy is already borrowed.");
+        this._borrowings.add(borrow);
+    }
 
-	/**
-     * Returns the work that this physical copy represents.
-     * * @return The associated {@link Work} instance.
+    /**
+     * Updates the physical condition of the copy.
+     *
+     * <p>This method is typically called automatically at the end of a
+     * {@link Borrow} transaction when the copy is returned in a different
+     * condition than it was borrowed — see
+     * {@link Borrow#returnBook(String, Bibliothecaire)}.</p>
+     *
+     * @param state the new physical condition; must not be {@code null}
      */
-	public Work	getReference() { return (this.reference); }
+    public void setState(State state) {
+        this._state = state;
+    }
 
-	/**
-     * Returns the current physical State of the copy.
-     * * @return A string describing the current condition.
+    // -------------------------------------------------------------------------
+    // Queries
+    // -------------------------------------------------------------------------
+
+    /**
+     * Returns whether this copy is currently available to be borrowed.
+     *
+     * <p>A copy is considered available if none of its recorded borrowing
+     * transactions are still active (i.e., all have been returned).</p>
+     *
+     * @return {@code true} if no active borrow exists; {@code false} otherwise
      */
-	public State	getState() { return (this._state); }
+    public Boolean isAvailable() {
+        return this._borrowings.stream()
+                .noneMatch(b -> !b.isReturned());
+    }
 
-	/**
-     * Updates the physical state of the copy (e.g., after a return).
-     * * @param e The new state string.
+    /**
+     * Returns whether this copy is currently overdue.
+     *
+     * <p>Delegates to the active {@link Borrow}'s {@link Borrow#isLate()} method.
+     * Returns {@code false} if the copy is not currently borrowed.</p>
+     *
+     * @return {@code true} if there is an active borrow and it is past its
+     *         expected return date; {@code false} otherwise
      */
-	public void	setEtat(State e) { this._state = e; }
+    public Boolean isLate() {
+        return this.getCurrentBorrow()
+                .map(Borrow::isLate)
+                .orElse(false);
+    }
 
-	/**
-     * Checks if the copy's current state matches the provided string.
-     * * @param s The state string to compare against.
-     * @return {@code true} if the states match exactly; {@code false} otherwise.
+    /**
+     * Checks whether the copy's current physical condition matches the given state.
+     *
+     * @param state the {@link State} to compare against; must not be {@code null}
+     * @return {@code true} if the copy's current state equals {@code state};
+     *         {@code false} otherwise
      */
-	public Boolean	isState(State s) { return s == this._state; }
+    public Boolean isState(State state) {
+        return this._state.equals(state);
+    }
 
-    public Boolean  isDisponible() {
-        Borrow[]    arrCopy = new Borrow[this._borrowing.size()];
-        Borrow      latest;
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
 
-        this._borrowing.toArray(arrCopy);
-        
+    /**
+     * Returns the {@link Work} that this physical copy represents.
+     *
+     * @return the associated {@link Work}; never {@code null}
+     */
+    public Work getReference() {
+        return this._reference;
+    }
+
+    /**
+     * Returns the current physical condition of this copy.
+     *
+     * @return the current {@link State}; never {@code null}
+     */
+    public State getState() {
+        return this._state;
+    }
+
+    /**
+     * Returns the currently active borrowing transaction, if any.
+     *
+     * <p>A borrow is considered active if {@link Borrow#isReturned()} returns
+     * {@code false}. At most one active borrow can exist at a time.</p>
+     *
+     * @return an {@link Optional} containing the active {@link Borrow},
+     *         or {@link Optional#empty()} if the copy is currently available
+     */
+    public Optional<Borrow> getCurrentBorrow() {
+        return this._borrowings.stream()
+                .filter(b -> !b.isReturned())
+                .findFirst();
+    }
+
+    /**
+     * Returns an unmodifiable view of all borrowing transactions ever recorded
+     * for this copy, including both past and active borrows.
+     *
+     * <p>The returned set reflects the current state of the transaction history
+     * but cannot be modified directly — use
+     * {@link #addBorrowing(Borrow)} to record a new transaction.</p>
+     *
+     * @return an unmodifiable {@link Set} of {@link Borrow} objects;
+     *         never {@code null}, but may be empty
+     */
+    public Set<Borrow> getBorrowings() {
+        return Collections.unmodifiableSet(this._borrowings);
+    }
+
+    /**
+     * Returns the total number of borrowing transactions ever recorded for
+     * this copy, including both past and currently active borrows.
+     *
+     * @return the total borrow count; always &gt;= 0
+     */
+    public int getBorrowCount() {
+        return this._borrowings.size();
     }
 }
