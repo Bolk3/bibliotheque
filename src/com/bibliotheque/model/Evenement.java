@@ -1,4 +1,4 @@
-package Model;
+package com.bibliotheque.model;
 
 import java.io.*;
 import java.util.*;
