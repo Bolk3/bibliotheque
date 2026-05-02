@@ -28,7 +28,7 @@ import java.util.Set;
 public class Borrow {
 
     private final Date              _startDate;
-    private final String            _initialState;
+    private final State             _initialState;
     private final Membre            _borrowedBy;
     private final Copy              _copy;
     private final Bibliothecaire    _validatedBy;
@@ -68,7 +68,7 @@ public class Borrow {
      */
     private void updateState() {
         if (this.isDamaged()) {
-            this._copy.setEtat(this._returnStamp.getReturnState());
+            //this._copy.setEtat(this._returnStamp.getReturnState());
         }
     }
 
@@ -203,7 +203,7 @@ public class Borrow {
      *
      * @return the initial state string; never {@code null}
      */
-    public String getInitialState() {
+    public State getInitialState() {
         return this._initialState;
     }
 

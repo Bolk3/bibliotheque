@@ -1,4 +1,4 @@
-package com.Bibliotheque.model;
+package com.bibliotheque.model;
 
 public enum State {
     NEUF,

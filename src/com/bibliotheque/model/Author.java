@@ -1,6 +1,6 @@
 package com.bibliotheque.model;
 
-import com.bibliotheque.erreur.RegexFormatError;
+import com.bibliotheque.errors.RegexFormatError;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -87,7 +87,7 @@ public class Author {
         if (name.matches("[a-z]{1,}[a-z ]{0,}[-]{0,1}[a-z]{0,}"))
             this._authorName = name;
         else
-            throw new RegexFormatError();
+            throw new RegexFormatError("test");
     }
 
     /**
@@ -116,7 +116,7 @@ public class Author {
         if (surname.matches("[a-z]+'?[a-z]*( [a-z]+'?[a-z]*)*(-[a-z]+'?[a-z]*)*"))
             this._authorSurname = surname;
         else
-            throw new RegexFormatError();
+            throw new RegexFormatError("test");
     }
 
     /**

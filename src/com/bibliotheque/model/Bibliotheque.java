@@ -1,6 +1,6 @@
 package com.bibliotheque.model;
 
-import com.bibliotheque.erreur.SearchStringTooSmall;
+import com.bibliotheque.errors.SearchStringTooSmall;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -225,13 +225,13 @@ public class Bibliotheque {
      * @return a {@link List} of works that are instances of {@code targetType};
      *         never {@code null}, but may be empty
      *
-     * @throws com.bibliotheque.erreur.SearchClassNotInherits if {@code targetType}
+     * @throws SearchClassNotInherits if {@code targetType}
      *                                                         is {@code null}
      */
-    public <T extends Work> List<T> findByType(Class<T> targetType)
-            throws com.bibliotheque.erreur.SearchClassNotInherits {
-        return SearchingWork.searchByType(this._catalogue, targetType);
-    }
+    //public <T extends Work> List<T> findByType(Class<T> targetType)
+    //        throws SearchClassNotInherits {
+    //    return SearchingWork.searchByType(this._catalogue, targetType);
+    //}
 
     // -------------------------------------------------------------------------
     // Borrow management
