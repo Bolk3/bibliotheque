@@ -1,7 +1,6 @@
 package com.bibliotheque.model;
 
 import com.bibliotheque.errors.SearchStringTooSmall;
-import com.bibliotheque.errors.SearchClassNotInherits;
 import java.util.*;
 import java.util.stream.Collectors;
 
