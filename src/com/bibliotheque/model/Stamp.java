@@ -31,7 +31,7 @@ import java.util.Date;
 public abstract class Stamp {
 
     private final Date              _timestamp;
-    private final Librarian    _validatedBy;
+    private final Librarian         _validatedBy;
     private final Borrow            _reference;
 
     /**
