@@ -21,7 +21,7 @@ import java.util.Date;
  * @see Stamp
  * @see ReturnStamp
  * @see Borrow
- * @see Bibliothecaire
+ * @see Librarian
  *
  * @version 1.1
  */
@@ -34,20 +34,20 @@ public class ExtensionStamp extends Stamp {
      * time as the moment the extension was processed.
      *
      * <p>This constructor is typically called from
-     * {@link Borrow#extendsDate(Date, Bibliothecaire)} and should not need
+     * {@link Borrow#extendsDate(Date, Librarian)} and should not need
      * to be instantiated directly elsewhere.</p>
      *
      * @param extensionDate the new due date granted by this extension;
      *                      must be strictly after the previous expected return
      *                      date — this is enforced by
-     *                      {@link Borrow#extendsDate(Date, Bibliothecaire)}
+     *                      {@link Borrow#extendsDate(Date, Librarian)}
      *                      before this stamp is created; must not be {@code null}
-     * @param validatedBy   the {@link Bibliothecaire} who authorised the
+     * @param validatedBy   the {@link Librarian} who authorised the
      *                      extension; must not be {@code null}
      * @param reference     the {@link Borrow} transaction this extension
      *                      applies to; must not be {@code null}
      */
-    public ExtensionStamp(Date extensionDate, Bibliothecaire validatedBy, Borrow reference) {
+    public ExtensionStamp(Date extensionDate, Librarian validatedBy, Borrow reference) {
         super(new Date(), validatedBy, reference);
         this._extensionDate = extensionDate;
     }

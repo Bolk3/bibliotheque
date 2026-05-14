@@ -2,259 +2,226 @@ package com.bibliotheque.model;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Represents a borrowing transaction in the library system.
  *
  * <p>This class manages the full lifecycle of a copy loan: from the initial
- * borrowing to optional date extensions and the final return. It tracks the
- * condition of the copy at both checkout and return, and provides utility
- * methods to check whether the loan is overdue, already returned, or whether
- * the copy was damaged during the loan.</p>
+ * checkout to optional date extensions and the final return. It maintains 
+ * accountability by tracking the librarians involved in each step and 
+ * monitoring the physical condition of the copy.</p>
  *
- * <p>Once a return has been recorded via {@link #returnBook(String, Bibliothecaire)},
- * no further modifications (extensions, returns) are permitted.</p>
+ * <p><b>Business Rules:</b>
+ * <ul>
+ *   <li>Extensions and returns require specific permission levels defined in {@link Settings}.</li>
+ *   <li>The copy's state is automatically updated in the system if it is returned damaged.</li>
+ *   <li>Once a {@link ReturnStamp} is issued, the transaction is closed and cannot be modified.</li>
+ * </ul>
+ * </p>
  *
  * @see ExtensionStamp
  * @see ReturnStamp
- * @see Membre
- * @see Bibliothecaire
+ * @see Member
+ * @see Librarian
  * @see Copy
+ * @see Settings
  *
- * @version 1.1
+ * @version 1.3
  */
 public class Borrow {
 
-    private final Date              _startDate;
-    private final String            _initialState;
-    private final Membre            _borrowedBy;
-    private final Copy              _copy;
-    private final Bibliothecaire    _validatedBy;
-    private Date                    _expectedDate;
-    private ReturnStamp             _returnStamp = null;
-    private Set<ExtensionStamp>     _extensions = new HashSet<>();
+    /** The date and time when the loan was initiated. */
+    private final Date                 _startDate;
+
+    /** The physical condition of the copy at the time of checkout. */
+    private final String               _initialState;
+
+    /** The library member who borrowed the copy. */
+    private final Member               _borrowedBy;
+
+    /** The specific physical copy associated with this loan. */
+    private final Copy                 _copy;
+
+    /** The librarian who authorized the initial borrowing. */
+    private final Librarian            _validatedBy;
+
+    /** The current deadline for returning the copy (can be updated via extensions). */
+    private Date                       _expectedDate;
+
+    /** The record of the return, or {@code null} if the book is still out. */
+    private ReturnStamp                _returnStamp = null;
+
+    /** A chronological list of all date extensions granted for this loan. */
+    private final Vector<ExtensionStamp> _extensions = new Vector<>();
 
     /**
-     * Constructs a new {@code Borrow} transaction, recording the current
-     * timestamp as the start date and capturing the copy's initial condition.
+     * Constructs a new {@code Borrow} transaction.
+     * 
+     * <p>Initializes the start date to the current system time and captures 
+     * the initial state of the copy for future comparison.</p>
      *
-     * @param expectedDate the date by which the copy is expected to be returned;
-     *                     must not be {@code null}
-     * @param validatedBy  the librarian who authorised this transaction;
-     *                     must not be {@code null}
-     * @param borrowedBy   the member borrowing the copy;
-     *                     must not be {@code null}
-     * @param copy         the specific copy being borrowed;
-     *                     must not be {@code null}
+     * @param expectedDate the initial deadline for the loan; must not be {@code null}
+     * @param validatedBy  the librarian authorizing the transaction; must not be {@code null}
+     * @param borrowedBy   the member borrowing the copy; must not be {@code null}
+     * @param copy         the specific {@link Copy} being loaned; must not be {@code null}
      */
-    public Borrow(Date expectedDate, Bibliothecaire validatedBy, Membre borrowedBy, Copy copy) {
+    public Borrow(Date expectedDate, Librarian validatedBy, Member borrowedBy, Copy copy) {
         this._startDate    = new Date();
         this._expectedDate = expectedDate;
         this._validatedBy  = validatedBy;
         this._borrowedBy   = borrowedBy;
         this._copy         = copy;
-        this._initialState = this._copy.getState();
+        this._initialState = this._copy.getState().toString();
     }
 
     /**
-     * Updates the copy's condition to match the state recorded at return,
-     * but only if the copy was returned in a different condition than it
-     * was borrowed ({@link #isDamaged()} returns {@code true}).
-     *
-     * <p>This method is called automatically by {@link #returnBook(String, Bibliothecaire)}
-     * and should not be called directly.</p>
+     * Updates the physical copy's state if damage is detected upon return.
+     * 
+     * <p>This method is invoked internally by {@link #returnBook(String, Librarian)}.</p>
      */
     private void updateState() {
         if (this.isDamaged()) {
-            this._copy.setEtat(this._returnStamp.getReturnState());
+            this._copy.setState(State.valueOf(this._returnStamp.getReturnState()));
         }
     }
 
     /**
-     * Extends the expected return date and records the extension as an
-     * {@link ExtensionStamp}.
+     * Extends the expected return date and logs the action.
      *
-     * @param newDate     the new expected return date; must be strictly after
-     *                    the current expected date
-     * @param validatedBy the librarian authorising the extension;
-     *                    must not be {@code null}
+     * <p>Validation checks:
+     * <ol>
+     *   <li>Librarian must have {@link Settings#PERM_EXTEND_LOAN} permission.</li>
+     *   <li>The loan must not be already closed (returned).</li>
+     *   <li>The new date must be strictly after the current deadline.</li>
+     * </ol>
+     * </p>
      *
-     * @throws IllegalStateException    if the copy has already been returned
-     * @throws IllegalArgumentException if {@code newDate} is not strictly after
-     *                                  the current expected return date
+     * @param newDate     the new deadline for the loan
+     * @param validatedBy the librarian authorizing this extension
+     * @throws IllegalStateException    if permission is denied or the book is already returned
+     * @throws IllegalArgumentException if the provided date is null or invalid
      */
-    public void extendsDate(Date newDate, Bibliothecaire validatedBy)
+    public void extendsDate(Date newDate, Librarian validatedBy)
             throws IllegalStateException, IllegalArgumentException {
-        if (this.isReturned())
-            throw new IllegalStateException("Déjà rendu.");
-        if (!newDate.after(this._expectedDate))
-            throw new IllegalArgumentException("Date invalide.");
+        
+        if (!Settings.hasAccess(validatedBy, Settings.PERM_EXTEND_LOAN)) {
+            throw new IllegalStateException("Permission insuffisante pour prolonger.");
+        }
+        if (this.isReturned()) {
+            throw new IllegalStateException("Impossible de prolonger un livre déjà rendu.");
+        }
+        if (newDate == null || !newDate.after(this._expectedDate)) {
+            throw new IllegalArgumentException("La nouvelle date doit être postérieure à l'échéance actuelle.");
+        }
+
         this._expectedDate = newDate;
         this._extensions.add(new ExtensionStamp(newDate, validatedBy, this));
     }
 
     /**
-     * Processes the return of the borrowed copy, recording the librarian,
-     * the return timestamp, and the condition of the copy at return.
+     * Records the return of the borrowed copy.
      *
-     * <p>If the copy is returned in a different state than it was borrowed,
-     * its condition is automatically updated via {@link #updateState()}.</p>
+     * <p>This operation closes the transaction. If the return state differs from 
+     * the initial state, the copy's metadata is updated to reflect the damage.</p>
      *
-     * @param state       the condition of the copy at the time of return;
-     *                    must not be {@code null}
-     * @param validatedBy the librarian processing the return;
-     *                    must not be {@code null}
-     *
-     * @throws IllegalStateException if the copy has already been returned
+     * @param state       the condition of the copy at the time of return
+     * @param validatedBy the librarian processing the return
+     * @throws IllegalStateException if permission is denied or already returned
      */
-    public void returnBook(String state, Bibliothecaire validatedBy)
+    public void returnBook(String state, Librarian validatedBy)
             throws IllegalStateException {
-        if (this.isReturned())
-            throw new IllegalStateException("Déjà rendu.");
+        
+        if (!Settings.hasAccess(validatedBy, Settings.PERM_PROCESS_RETURN)) {
+            throw new IllegalStateException("Permission insuffisante pour valider le retour.");
+        }
+        if (this.isReturned()) {
+            throw new IllegalStateException("Ce prêt a déjà été clôturé.");
+        }
+
         this._returnStamp = new ReturnStamp(state, this, validatedBy);
         this.updateState();
     }
 
+    // -------------------------------------------------------------------------
+    // Logic Queries
+    // -------------------------------------------------------------------------
+
     /**
-     * Returns whether the loan is currently overdue.
-     *
-     * <p>A loan is overdue if the current date is strictly after the
-     * expected return date. Note that this check remains meaningful even
-     * after the copy has been returned, since it reflects whether the
-     * return was made on time.</p>
-     *
-     * @return {@code true} if the current date is past the expected return date;
-     *         {@code false} otherwise
+     * Checks if the loan is overdue based on the current system time.
+     * @return {@code true} if the current date is past the expected date
      */
-    public Boolean isLate() {
+    public boolean isLate() {
         return new Date().after(this._expectedDate);
     }
 
     /**
-     * Returns whether the copy has been returned.
-     *
-     * @return {@code true} if a {@link ReturnStamp} has been recorded;
-     *         {@code false} otherwise
+     * Checks if the copy has been returned to the library.
+     * @return {@code true} if a return stamp exists
      */
-    public Boolean isReturned() {
+    public boolean isReturned() {
         return (this._returnStamp != null);
     }
 
     /**
-     * Returns whether the copy was damaged during the loan, i.e. whether
-     * its condition at return differs from its condition at checkout.
-     *
-     * @return {@code true} if the return state differs from the initial state;
-     *         {@code false} if the copy has not yet been returned, or if its
-     *         condition is unchanged
+     * Compares the initial and return conditions of the copy.
+     * @return {@code true} if the book was returned in a different state
      */
-    public Boolean isDamaged() {
-        if (!this.isReturned())
-            return false;
+    public boolean isDamaged() {
+        if (!this.isReturned()) return false;
         return !this._returnStamp.getReturnState().equals(this._initialState);
     }
 
     /**
-     * Calculates the total duration of the loan in milliseconds.
-     *
-     * <p>If the copy has been returned, the duration is measured from the
-     * start date to the recorded return timestamp. Otherwise, it is measured
-     * from the start date to the current moment.</p>
-     *
-     * @return the elapsed time in milliseconds since the start of the loan
+     * Calculates the duration of the loan.
+     * @return time elapsed in milliseconds (from start to return, or start to now)
      */
     public long getElapsedTime() {
-        long startEpoch   = this._startDate.getTime();
-        long currentEpoch = this.isReturned()
-                ? this._returnStamp.getTimestamp().getTime()
+        long startEpoch = this._startDate.getTime();
+        long endEpoch   = this.isReturned() 
+                ? this._returnStamp.getTimestamp().getTime() 
                 : new Date().getTime();
-        return (currentEpoch - startEpoch);
+        return (endEpoch - startEpoch);
     }
 
     // -------------------------------------------------------------------------
     // Getters
     // -------------------------------------------------------------------------
 
-    /**
-     * Returns the date on which this loan started.
-     *
-     * @return the start date; never {@code null}
-     */
     public Date getStartDate() {
         return new Date(this._startDate.getTime());
     }
 
-    /**
-     * Returns the current expected return date.
-     *
-     * <p>This value may differ from the original date if extensions have
-     * been granted via {@link #extendsDate(Date, Bibliothecaire)}.</p>
-     *
-     * @return the expected return date; never {@code null}
-     */
     public Date getExpectedDate() {
         return new Date(this._expectedDate.getTime());
     }
 
-    /**
-     * Returns the condition of the copy at the time it was borrowed.
-     *
-     * @return the initial state string; never {@code null}
-     */
     public String getInitialState() {
         return this._initialState;
     }
 
-    /**
-     * Returns the member who borrowed the copy.
-     *
-     * @return the borrowing {@link Membre}; never {@code null}
-     */
-    public Membre getBorrower() {
+    public Member getBorrower() {
         return this._borrowedBy;
     }
 
-    /**
-     * Returns the librarian who validated the initial borrow.
-     *
-     * @return the validating {@link Bibliothecaire}; never {@code null}
-     */
-    public Bibliothecaire getValidator() {
+    public Librarian getValidator() {
         return this._validatedBy;
     }
 
-    /**
-     * Returns the copy involved in this loan.
-     *
-     * @return the borrowed {@link Copy}; never {@code null}
-     */
     public Copy getCopy() {
         return this._copy;
     }
 
-    /**
-     * Returns the return stamp associated with this loan, if the copy
-     * has been returned.
-     *
-     * @return the {@link ReturnStamp}, or {@code null} if not yet returned
-     */
     public ReturnStamp getReturnStamp() {
         return this._returnStamp;
     }
 
     /**
-     * Returns an unmodifiable view of all extensions granted for this loan.
-     *
-     * <p>The returned set reflects the current state of extensions but cannot
-     * be modified directly — use {@link #extendsDate(Date, Bibliothecaire)}
-     * to add a new extension.</p>
-     *
-     * @return an unmodifiable {@link Set} of {@link ExtensionStamp} objects;
-     *         never {@code null}, but may be empty
+     * Returns an unmodifiable view of the extension history.
+     * @return a {@link List} of {@link ExtensionStamp} objects in chronological order
      */
-    public Set<ExtensionStamp> getExtensions() {
-        return Collections.unmodifiableSet(this._extensions);
+    public List<ExtensionStamp> getExtensions() {
+        return Collections.unmodifiableList(this._extensions);
     }
 }

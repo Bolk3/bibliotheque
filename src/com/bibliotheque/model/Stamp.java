@@ -8,7 +8,7 @@ import java.util.Date;
  *
  * <p>A {@code Stamp} acts as an immutable audit log entry that captures three
  * core pieces of information: the exact moment an action occurred, the
- * {@link Bibliothecaire} who authorised it, and the {@link Borrow} transaction
+ * {@link Librarian} who authorised it, and the {@link Borrow} transaction
  * it belongs to.</p>
  *
  * <p>This class is extended by concrete stamp types that each represent a
@@ -24,14 +24,14 @@ import java.util.Date;
  * @see ExtensionStamp
  * @see ReturnStamp
  * @see Borrow
- * @see Bibliothecaire
+ * @see Librarian
  *
  * @version 1.1
  */
 public abstract class Stamp {
 
     private final Date              _timestamp;
-    private final Bibliothecaire    _validatedBy;
+    private final Librarian    _validatedBy;
     private final Borrow            _reference;
 
     /**
@@ -44,12 +44,12 @@ public abstract class Stamp {
      *
      * @param timestamp   the exact date and time the event occurred;
      *                    must not be {@code null}
-     * @param validatedBy the {@link Bibliothecaire} who authorised this action;
+     * @param validatedBy the {@link Librarian} who authorised this action;
      *                    must not be {@code null}
      * @param reference   the {@link Borrow} transaction this stamp belongs to;
      *                    must not be {@code null}
      */
-    public Stamp(Date timestamp, Bibliothecaire validatedBy, Borrow reference) {
+    public Stamp(Date timestamp, Librarian validatedBy, Borrow reference) {
         this._timestamp   = timestamp;
         this._validatedBy = validatedBy;
         this._reference   = reference;
@@ -74,9 +74,9 @@ public abstract class Stamp {
     /**
      * Returns the librarian who authorised the action recorded by this stamp.
      *
-     * @return the validating {@link Bibliothecaire}; never {@code null}
+     * @return the validating {@link Librarian}; never {@code null}
      */
-    public Bibliothecaire getValidator() {
+    public Librarian getValidator() {
         return this._validatedBy;
     }
 
