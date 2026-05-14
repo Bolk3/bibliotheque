@@ -1,4 +1,4 @@
-package com.bibliotheque.model;
+package com.bibliotheque.errors;
 
 /**
  * Exception thrown when a search operation is attempted using a class type 

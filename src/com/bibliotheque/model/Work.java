@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @see Dvd
  * @see Copy
  * @see Author
- * @see Evenement
+ * @see Event
  * @see Bibliotheque
  *
  * @version 1.1
@@ -41,7 +41,7 @@ public abstract class Work {
     private final Date          _publicationDate;
     private final List<Copy>    _copies     = new ArrayList<>();
     private final Set<Author>   _authors    = new HashSet<>();
-    private final Set<Evenement> _evenements = new HashSet<>();
+    private final Set<Event> _evenements = new HashSet<>();
 
     /**
      * Constructs the fundamental metadata for any library work.
@@ -76,10 +76,10 @@ public abstract class Work {
      * <p>Duplicate events are silently ignored since the underlying collection
      * is a {@link Set}.</p>
      *
-     * @param evenement the {@link Evenement} to associate with this work;
+     * @param evenement the {@link Event} to associate with this work;
      *                  must not be {@code null}
      */
-    public void addEvenement(Evenement evenement) {
+    public void addEvent(Event evenement) {
         this._evenements.add(evenement);
     }
 
@@ -244,12 +244,13 @@ public abstract class Work {
     /**
      * Returns an unmodifiable view of all events associated with this work.
      *
-     * <p>Use {@link #addEvenement(Evenement)} to register a new event.</p>
+     * <p>Use {@link #addEvent(Event)} to register a new event.</p>
      *
-     * @return an unmodifiable {@link Set} of {@link Evenement} instances;
+     * @return an unmodifiable {@link Set} of {@link Event} instances;
      *         never {@code null}, but may be empty
      */
-    public Set<Evenement> getEvenements() {
+    public Set<Event> getEvents() {
         return Collections.unmodifiableSet(this._evenements);
     }
+    public Author getAuthor() { return this._authors.iterator().next(); }
 }

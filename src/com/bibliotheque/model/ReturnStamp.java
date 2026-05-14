@@ -21,7 +21,7 @@ import java.util.Date;
  * @see Stamp
  * @see ExtensionStamp
  * @see Borrow
- * @see Bibliothecaire
+ * @see Librarian
  *
  * @version 1.1
  */
@@ -34,7 +34,7 @@ public class ReturnStamp extends Stamp {
      * as the official return timestamp.
      *
      * <p>This constructor is typically called from
-     * {@link Borrow#returnBook(String, Bibliothecaire)} and should not need
+     * {@link Borrow#returnBook(String, Librarian)} and should not need
      * to be instantiated directly elsewhere.</p>
      *
      * @param returnState the observed physical condition of the copy at the
@@ -42,10 +42,10 @@ public class ReturnStamp extends Stamp {
      *                    must not be {@code null}
      * @param reference   the {@link Borrow} transaction this return closes;
      *                    must not be {@code null}
-     * @param validatedBy the {@link Bibliothecaire} processing the return;
+     * @param validatedBy the {@link Librarian} processing the return;
      *                    must not be {@code null}
      */
-    public ReturnStamp(String returnState, Borrow reference, Bibliothecaire validatedBy) {
+    public ReturnStamp(String returnState, Borrow reference, Librarian validatedBy) {
         super(new Date(), validatedBy, reference);
         this._returnState = returnState;
     }
