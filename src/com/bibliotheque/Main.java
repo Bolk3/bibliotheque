@@ -64,8 +64,6 @@ public class Main {
 
         } catch (Exception e) {
             System.err.println("ERREUR : " + e.getMessage());
-            // Utile pour le débuggage pendant le développement :
-            // e.printStackTrace(); 
         }
     }
 }
