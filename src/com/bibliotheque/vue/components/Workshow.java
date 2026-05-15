@@ -1,16 +1,14 @@
 package com.bibliotheque.vue.components;
 
+import com.bibliotheque.model.Work;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.bibliotheque.model.Work;
-
-public class Bookshow extends JPanel{
+public class Workshow extends JPanel{
     Work    handle;
     JPanel  heroConatiner = new JPanel();
     JPanel  imageContainer = new JPanel();
@@ -19,7 +17,8 @@ public class Bookshow extends JPanel{
     JLabel  author;
     JLabel  pubDate;
 
-    public Bookshow (Work handler) {
+    public Workshow (Work handler) {
+        this.handle = handler;
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLineBorder(Color.black));
 
@@ -27,6 +26,7 @@ public class Bookshow extends JPanel{
 
         title = new JLabel(this.handle.getTitle());
         pubDate = new JLabel(this.handle.getPublicationDate().toString());
+        author = new JLabel("test");
 
         heroConatiner.add(title);
         heroConatiner.add(author);

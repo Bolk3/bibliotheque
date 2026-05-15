@@ -1,16 +1,15 @@
 package com.bibliotheque.vue;
 
+import com.bibliotheque.model.Bibliotheque;
+import com.bibliotheque.model.Work;
+import com.bibliotheque.vue.components.Workshow;
+import com.bibliotheque.vue.controllers.PageController;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.Vector;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import com.bibliotheque.model.Work;
-import com.bibliotheque.vue.components.Bookshow;
-import com.bibliotheque.vue.controllers.PageController;
 
 public class Catalog extends JPanel{
     Integer         page = 0;
@@ -21,16 +20,16 @@ public class Catalog extends JPanel{
     JPanel          searchDisplay = new JPanel();
     JPanel          pageDisplay = new JPanel();
 
-    public Catalog() {
+    public Catalog(Bibliotheque handle) {
         this.setLayout(new BorderLayout());
 
         for (int i = 0; i < 30; i++) {
             Work current = handle.get(i);
-            display.add(new Bookshow(current));
+            display.add(new Workshow(current));
             if (i < 10)
                 displayHandle.add(display.get(i));
             if (i % 10 == 0) {
-                pageButtons.add(new JButton("" + (i / 10) + 1));
+                pageButtons.add(new JButton("" + ((i / 10) + 1)));
                 pageButtons.get(i / 10).addActionListener(new PageController(this, i / 10));
                 pageDisplay.add(pageButtons.get(i / 10));
             }

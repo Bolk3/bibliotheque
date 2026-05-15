@@ -3,7 +3,7 @@ TEST_DIR  = test
 OUT_DIR   = out
 LIB_DIR   = lib
 
-MAIN_CLASS = Main
+MAIN_CLASS = com.bibliotheque.Main
 
 JUNIT_JAR = $(LIB_DIR)/junit-platform-console-standalone-1.10.2.jar
 JUNIT_URL = https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.2/junit-platform-console-standalone-1.10.2.jar
@@ -27,6 +27,7 @@ setup:
 compile: setup
 	@if [ -z "$(SOURCES)" ]; then echo "Erreur: Aucune source dans $(SRC_DIR)"; exit 1; fi
 	@$(JAVAC) $(JFLAGS) $(SOURCES)
+	@cp -r $(SRC_DIR)/assets $(OUT_DIR)/
 
 test: compile
 	@if [ -z "$(TESTS)" ]; then echo "Erreur: Aucun test dans $(TEST_DIR)"; exit 1; fi

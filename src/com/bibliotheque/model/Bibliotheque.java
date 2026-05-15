@@ -76,4 +76,18 @@ public class Bibliotheque {
     public Set<Author> getAuthors()     { return Collections.unmodifiableSet(_authors); }
     public Set<Member> getMembers()     { return Collections.unmodifiableSet(_members); }
     public Set<Librarian> getLibrarians() { return Collections.unmodifiableSet(_librarians); }
+
+    public Work get(int i) {
+        return _catalogue.stream()
+            .skip(i)
+            .findFirst()
+            .orElseThrow(() -> new IndexOutOfBoundsException("Index: " + i));
+    }
+
+    public void removeAuthor(String firstName, String lastName) {
+        _authors.removeIf(a -> a.getFirstName().equals(firstName)
+                            && a.getLastName().equals(lastName));
+        // Retirer l'auteur de tous les works
+        _catalogue.forEach(w -> w.removeAuthor(firstName, lastName));
+    }
 }

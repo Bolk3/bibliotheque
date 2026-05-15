@@ -108,6 +108,11 @@ public abstract class Work {
             this._copies.add(copy);
     }
 
+    public void removeAuthor(String firstName, String lastName) {
+        this._authors.removeIf(a -> a.getFirstName().equals(firstName)
+                            && a.getLastName().equals(lastName));
+    }
+
     // -------------------------------------------------------------------------
     // Queries
     // -------------------------------------------------------------------------

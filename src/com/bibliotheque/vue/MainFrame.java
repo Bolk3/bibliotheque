@@ -1,23 +1,29 @@
 package com.bibliotheque.vue;
 
+import com.bibliotheque.model.Bibliotheque;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Vector;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class MainFrame extends JFrame{
 
+    Bibliotheque    bibliotheque;
     JPanel          menu;
     JPanel          current;
     Vector<JPanel>  history = new Vector<>();
     Integer         tab = -1;
 
-    public MainFrame() {
+    public MainFrame(Bibliotheque bibliotheque) {
+        this.bibliotheque = bibliotheque;
         setLayout(new BorderLayout());
         getContentPane().setPreferredSize(new Dimension(720, 480));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
+
+        menu = new Menu(this);
+        add(this.menu);
     }
 
     private void deleteHistoryFrom(int index) {
