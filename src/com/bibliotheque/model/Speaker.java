@@ -18,7 +18,7 @@ import java.util.Vector;
  */
 public class Speaker extends User {
 
-    private String                  _specialty;
+    private String              _specialty;
     private final Vector<Event> _participatedEvents = new Vector<>();
 
     /**

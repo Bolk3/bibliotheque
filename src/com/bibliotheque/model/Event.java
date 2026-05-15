@@ -50,13 +50,16 @@ public class Event {
 
     /**
      * Registers a member to the event.
+     * 
+     * <p>If the member is valid and not already registered, adds them to the 
+     * participants list and establishes the bidirectional relationship.</p>
      *
      * @param member the {@link Member} joining
      */
     public void addParticipant(Member member) {
         if (member != null && !this._participants.contains(member)) {
             this._participants.add(member);
-            member.joinEvent(this); // Maintains bidirectional relationship
+            member.joinEvent(this);
         }
     }
 
@@ -75,7 +78,7 @@ public class Event {
         }
         if (speaker != null && !this._speakers.contains(speaker)) {
             this._speakers.add(speaker);
-            speaker.addEvent(this); // Maintains bidirectional relationship
+            speaker.addEvent(this);
         }
     }
 
@@ -97,7 +100,7 @@ public class Event {
     /**
      * Checks if the event is currently happening.
      *
-     * @return {@code true} if current date is between start and end date
+     * @return {@code true} if current date is between start and end date, otherwise {@code false}
      */
     public boolean isActive() {
         Date now = new Date();
@@ -107,7 +110,7 @@ public class Event {
     /**
      * Checks if the event has already finished.
      *
-     * @return {@code true} if current date is after end date
+     * @return {@code true} if current date is after end date, otherwise {@code false}
      */
     public boolean isFinished() {
         return new Date().after(_endDate);
@@ -117,42 +120,92 @@ public class Event {
     // Getters & Setters
     // -------------------------------------------------------------------------
 
+    /**
+     * Returns a defensive copy of the event's start date.
+     * 
+     * @return the event start date
+     */
     public Date getStartDate() {
         return new Date(_startDate.getTime());
     }
 
+    /**
+     * Sets the event's start date.
+     * 
+     * @param date the new start date
+     */
     public void setStartDate(Date date) {
         this._startDate = date;
     }
 
+    /**
+     * Returns a defensive copy of the event's end date.
+     * 
+     * @return the event end date
+     */
     public Date getEndDate() {
         return new Date(_endDate.getTime());
     }
 
+    /**
+     * Sets the event's end date.
+     * 
+     * @param date the new end date
+     */
     public void setEndDate(Date date) {
         this._endDate = date;
     }
 
+    /**
+     * Returns the type or category of the event.
+     * 
+     * @return the event type string
+     */
     public String getType() {
         return _type;
     }
 
+    /**
+     * Sets the type or category of the event.
+     * 
+     * @param type the new event type string
+     */
     public void setType(String type) {
         this._type = type;
     }
 
+    /**
+     * Returns an unmodifiable view of the works related to this event.
+     * 
+     * @return an unmodifiable {@link List} of {@link Work} instances
+     */
     public List<Work> getRelatedWorks() {
         return Collections.unmodifiableList(_relatedWorks);
     }
 
+    /**
+     * Returns an unmodifiable view of the registered event participants.
+     * 
+     * @return an unmodifiable {@link List} of {@link Member} instances
+     */
     public List<Member> getParticipants() {
         return Collections.unmodifiableList(_participants);
     }
 
+    /**
+     * Returns an unmodifiable view of the guest speakers for this event.
+     * 
+     * @return an unmodifiable {@link List} of {@link Speaker} instances
+     */
     public List<Speaker> getSpeakers() {
         return Collections.unmodifiableList(_speakers);
     }
 
+    /**
+     * Returns the library instance managing this event.
+     * 
+     * @return the managing {@link Bibliotheque} handler
+     */
     public Bibliotheque getHandler() {
         return _handler;
     }

@@ -35,11 +35,11 @@ public class Librarian extends User {
      * <p>Initializes the librarian's profile by calling the {@link User} constructor 
      * and setting specific professional attributes.</p>
      *
-     * @param firstName the librarian's first name
-     * @param lastName  the librarian's last name
-     * @param email     the librarian's professional email
-     * @param handler   the {@link Bibliotheque} instance managing this user
-     * @param position  the official job title or position
+     * @param firstName  the librarian's first name
+     * @param lastName   the librarian's last name
+     * @param email      the librarian's professional email
+     * @param handler    the {@link Bibliotheque} instance managing this user
+     * @param position   the official job title or position
      * @param permission the numerical permission level
      * @throws IllegalArgumentException if user identity validation fails
      */
@@ -167,5 +167,15 @@ public class Librarian extends User {
      */
     public List<Borrow> getValidatedBorrows() {
         return Collections.unmodifiableList(this._validatedBorrows);
+    }
+
+    /**
+     * Returns a string representation of the librarian, consisting of their full name.
+     * 
+     * @return the librarian's first name followed by their last name
+     */
+    @Override
+    public String toString() {
+        return this.getFirstName() + " " + this.getLastName();
     }
 }
