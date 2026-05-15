@@ -8,12 +8,12 @@
 ---
 
 ## Features
-**Catalog** - find and view works; manage multiple types of content within a work; view detailed content about a work; create a virtual list of physical objects.
-**Loans** - lend, return, extend, and keep track of all lending history by member.
-**Admin** - manage members; manage librarians; view all action logs.
-**Authors** - add/remove author(s).
-**Events** - run conferences; manage speakers.
-**Security** - role based access for librarians.
+- **Catalog** - find and view works; manage multiple types of content within a work; view detailed content about a work; create a virtual list of physical objects.
+- **Loans** - lend, return, extend, and keep track of all lending history by member.
+- **Admin** - manage members; manage librarians; view all action logs.
+- **Authors** - add/remove author(s).
+- **Events** - run conferences; manage speakers.
+- **Security** - role based access for librarians.
 
 ## Build
 ### Prerequisites
