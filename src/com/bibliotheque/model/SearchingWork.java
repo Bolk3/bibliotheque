@@ -2,7 +2,6 @@ package com.bibliotheque.model;
 
 import com.bibliotheque.errors.SearchClassNotInherits;
 import com.bibliotheque.errors.SearchStringTooSmall;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -212,7 +211,7 @@ public class SearchingWork {
      * @throws SearchClassNotInherits if {@code targetType} is {@code null}
      */
     public static <T extends Work> List<T> searchByType(Set<Work> catalogue,
-                                                         Class<T> targetType)
+                                                        Class<T> targetType)
             throws SearchClassNotInherits {
         if (targetType == null)
             throw new SearchClassNotInherits("Target type cannot be null.");

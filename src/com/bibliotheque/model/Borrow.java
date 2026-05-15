@@ -117,7 +117,11 @@ public class Borrow {
         }
 
         this._expectedDate = newDate;
-        this._extensions.add(new ExtensionStamp(newDate, validatedBy, this));
+        
+        ExtensionStamp stamp = new ExtensionStamp(newDate, validatedBy, this);
+        this._extensions.add(stamp);
+        
+        validatedBy.addValidatedStamp(stamp);
     }
 
     /**
@@ -141,6 +145,9 @@ public class Borrow {
         }
 
         this._returnStamp = new ReturnStamp(state, this, validatedBy);
+        
+        validatedBy.addValidatedStamp(this._returnStamp);
+        
         this.updateState();
     }
 
@@ -150,7 +157,8 @@ public class Borrow {
 
     /**
      * Checks if the loan is overdue based on the current system time.
-     * @return {@code true} if the current date is past the expected date
+     * 
+     * @return {@code true} if the current date is past the expected date, otherwise {@code false}
      */
     public boolean isLate() {
         return new Date().after(this._expectedDate);
@@ -158,7 +166,8 @@ public class Borrow {
 
     /**
      * Checks if the copy has been returned to the library.
-     * @return {@code true} if a return stamp exists
+     * 
+     * @return {@code true} if a return stamp exists, otherwise {@code false}
      */
     public boolean isReturned() {
         return (this._returnStamp != null);
@@ -166,7 +175,8 @@ public class Borrow {
 
     /**
      * Compares the initial and return conditions of the copy.
-     * @return {@code true} if the book was returned in a different state
+     * 
+     * @return {@code true} if the book was returned in a different state, otherwise {@code false}
      */
     public boolean isDamaged() {
         if (!this.isReturned()) return false;
@@ -175,7 +185,8 @@ public class Borrow {
 
     /**
      * Calculates the duration of the loan.
-     * @return time elapsed in milliseconds (from start to return, or start to now)
+     * 
+     * @return time elapsed in milliseconds from start to return, or start to now if still active
      */
     public long getElapsedTime() {
         long startEpoch = this._startDate.getTime();
@@ -189,37 +200,73 @@ public class Borrow {
     // Getters
     // -------------------------------------------------------------------------
 
+    /**
+     * Returns a defensive copy of the borrowing transaction start date.
+     * 
+     * @return the loan initialization date
+     */
     public Date getStartDate() {
         return new Date(this._startDate.getTime());
     }
 
+    /**
+     * Returns a defensive copy of the current expected deadline date.
+     * 
+     * @return the expected return deadline date
+     */
     public Date getExpectedDate() {
         return new Date(this._expectedDate.getTime());
     }
 
+    /**
+     * Returns the textual description of the copy's condition at checkout.
+     * 
+     * @return the initial state string
+     */
     public String getInitialState() {
         return this._initialState;
     }
 
+    /**
+     * Returns the member associated with this transaction.
+     * 
+     * @return the borrowing {@link Member}
+     */
     public Member getBorrower() {
         return this._borrowedBy;
     }
 
+    /**
+     * Returns the librarian who authorized the initial borrowing.
+     * 
+     * @return the validating {@link Librarian}
+     */
     public Librarian getValidator() {
         return this._validatedBy;
     }
 
+    /**
+     * Returns the physical copy linked to this transaction.
+     * 
+     * @return the loaned {@link Copy}
+     */
     public Copy getCopy() {
         return this._copy;
     }
 
+    /**
+     * Returns the return record stamp associated with this transaction.
+     * 
+     * @return the {@link ReturnStamp} instance, or {@code null} if the item is still loaned out
+     */
     public ReturnStamp getReturnStamp() {
         return this._returnStamp;
     }
 
     /**
      * Returns an unmodifiable view of the extension history.
-     * @return a {@link List} of {@link ExtensionStamp} objects in chronological order
+     * 
+     * @return a chronological {@link List} of {@link ExtensionStamp} objects
      */
     public List<ExtensionStamp> getExtensions() {
         return Collections.unmodifiableList(this._extensions);

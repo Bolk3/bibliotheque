@@ -17,13 +17,23 @@ public class ValidationUtils {
     private static final String REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
     /**
+     * Private constructor — this class is a static utility and should
+     * never be instantiated.
+     */
+    private ValidationUtils() {}
+
+    // -------------------------------------------------------------------------
+    // Validation Methods
+    // -------------------------------------------------------------------------
+
+    /**
      * Validates a first name against the internal naming policy.
      *
      * @param fn the string to validate
      * @return {@code true} if the string matches {@link #REGEX_NAME}
      */
     public static boolean isFirstNameValid(String fn) {
-        return fn.matches(REGEX_NAME);
+        return fn != null && fn.matches(REGEX_NAME);
     }
 
     /**
@@ -33,7 +43,7 @@ public class ValidationUtils {
      * @return {@code true} if the string matches {@link #REGEX_NAME}
      */
     public static boolean isLastNameValid(String ln) {
-        return ln.matches(REGEX_NAME);
+        return ln != null && ln.matches(REGEX_NAME);
     }
 
     /**
@@ -43,8 +53,12 @@ public class ValidationUtils {
      * @return {@code true} if the string matches {@link #REGEX_EMAIL}
      */
     public static boolean isEmailValid(String mail) {
-        return mail.matches(REGEX_EMAIL);
+        return mail != null && mail.matches(REGEX_EMAIL);
     }
+
+    // -------------------------------------------------------------------------
+    // Normalization Methods
+    // -------------------------------------------------------------------------
 
     /**
      * Normalizes a string for comparison purposes.

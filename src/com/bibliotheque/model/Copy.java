@@ -25,9 +25,9 @@ import java.util.Set;
  */
 public class Copy {
 
-    private final Work      _reference;
-    private Set<Borrow>     _borrowings = new HashSet<>();
-    private State           _state;
+    private final Work       _reference;
+    private Set<Borrow>      _borrowings = new HashSet<>();
+    private State            _state;
 
     /**
      * Constructs a new {@code Copy} of a work with an initial physical condition.
@@ -70,7 +70,7 @@ public class Copy {
      * <p>This method is typically called automatically at the end of a
      * {@link Borrow} transaction when the copy is returned in a different
      * condition than it was borrowed — see
-     * {@link Borrow#returnBook(String, Bibliothecaire)}.</p>
+     * {@link Borrow#returnBook(String, Librarian)}.</p>
      *
      * @param state the new physical condition; must not be {@code null}
      */

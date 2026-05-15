@@ -10,37 +10,20 @@ package com.bibliotheque.model;
  * @version 1.0
  */
 public final class Settings {
-
-    // -------------------------------------------------------------------------
-    // Permission Levels
-    // -------------------------------------------------------------------------
-
-    /** Minimum level required to validate a standard borrow. */
-    public static final int PERM_VALIDATE_BORROW = 1;
-
-    /** Minimum level required to grant a return date extension. */
-    public static final int PERM_EXTEND_LOAN = 2;
-
-    /** Minimum level required to process a return and update copy states. */
-    public static final int PERM_PROCESS_RETURN = 1;
-
-    /** Minimum level required to modify library metadata (Users, Works). */
-    public static final int PERM_ADMIN_METADATA = 5;
-
-    /** Level reserved for system administrators. */
-    public static final int PERM_SUPERUSER = 10;
-
-    // -------------------------------------------------------------------------
-    // Utility Logic
-    // -------------------------------------------------------------------------
+    
+    public static int PERM_VALIDATE_BORROW = 1;
+    public static int PERM_EXTEND_LOAN     = 2;
+    public static int PERM_PROCESS_RETURN  = 1;
+    public static int PERM_ADMIN_METADATA  = 5;
+    public static int PERM_SUPERUSER       = 10;
 
     /**
-     * Checks if a librarian has sufficient privileges for a specific action level.
+     * Checks if a librarian has sufficient permissions to perform an operation.
      *
-     * @param librarian the {@link Librarian} to check
-     * @param requiredLevel the minimum permission level required
-     * @return {@code true} if the librarian's level is equal to or higher than 
-     *         the required level; {@code false} otherwise
+     * @param librarian     the {@link Librarian} attempting the action; can be {@code null}
+     * @param requiredLevel the minimum required security clearance level
+     * @return {@code true} if the librarian's clearance is greater than or equal to the 
+     *         required level; {@code false} if the librarian is {@code null} or lacks permission
      */
     public static boolean hasAccess(Librarian librarian, int requiredLevel) {
         if (librarian == null) return false;
@@ -48,7 +31,10 @@ public final class Settings {
     }
 
     /**
-     * Private constructor to prevent instantiation of this utility class.
+     * Private constructor — this class is a static configuration utility and should 
+     * never be instantiated.
+     * 
+     * @throws UnsupportedOperationException always
      */
     private Settings() {
         throw new UnsupportedOperationException("Utility class");

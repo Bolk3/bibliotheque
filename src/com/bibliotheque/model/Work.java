@@ -41,7 +41,7 @@ public abstract class Work {
     private final Date          _publicationDate;
     private final List<Copy>    _copies     = new ArrayList<>();
     private final Set<Author>   _authors    = new HashSet<>();
-    private final Set<Event> _evenements = new HashSet<>();
+    private final Set<Event>    _evenements = new HashSet<>();
 
     /**
      * Constructs the fundamental metadata for any library work.
@@ -80,7 +80,9 @@ public abstract class Work {
      *                  must not be {@code null}
      */
     public void addEvent(Event evenement) {
-        this._evenements.add(evenement);
+        if (evenement != null) {
+            this._evenements.add(evenement);
+        }
     }
 
     /**
@@ -92,7 +94,9 @@ public abstract class Work {
      * @param author the {@link Author} to credit; must not be {@code null}
      */
     public void addAuthor(Author author) {
-        this._authors.add(author);
+        if (author != null) {
+            this._authors.add(author);
+        }
     }
 
     /**
@@ -104,13 +108,20 @@ public abstract class Work {
      * @param copy the {@link Copy} instance to add; must not be {@code null}
      */
     public void addCopy(Copy copy) {
-        if (!this._copies.contains(copy))
+        if (copy != null && !this._copies.contains(copy)) {
             this._copies.add(copy);
+        }
     }
 
+    /**
+     * Removes an author from the credited collection based on identity details.
+     * 
+     * @param firstName the first name of the author to remove
+     * @param lastName  the last name of the author to remove
+     */
     public void removeAuthor(String firstName, String lastName) {
         this._authors.removeIf(a -> a.getFirstName().equals(firstName)
-                            && a.getLastName().equals(lastName));
+                                 && a.getLastName().equals(lastName));
     }
 
     // -------------------------------------------------------------------------
@@ -257,5 +268,4 @@ public abstract class Work {
     public Set<Event> getEvents() {
         return Collections.unmodifiableSet(this._evenements);
     }
-    public Author getAuthor() { return this._authors.iterator().next(); }
 }

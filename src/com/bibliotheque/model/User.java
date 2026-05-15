@@ -135,8 +135,7 @@ public abstract class User {
      * @throws RegexFormatError if the input string format is invalid
      */
     public Boolean isLastName(String ln) throws RegexFormatError {
-        // Note: verify if 'fn' should be 'ln' in your implementation logic
-        if (ValidationUtils.isFirstNameValid(ln)) { 
+        if (ValidationUtils.isLastNameValid(ln)) { 
             return ValidationUtils.normalize(this._lastName).equals(ValidationUtils.normalize(ln));
         } else {
              return false;
@@ -147,13 +146,13 @@ public abstract class User {
      * Compares the provided string with the user's email using email-specific 
      * normalization.
      *
-     * @param fn the email string to compare against
+     * @param email Str the email string to compare against
      * @return {@code true} if the normalized emails match; {@code false} otherwise
      * @throws RegexFormatError if the input string format is invalid
      */
-    public Boolean isEmail(String fn) throws RegexFormatError {
-        if (ValidationUtils.isFirstNameValid(fn)) {
-            return ValidationUtils.normalizeEmail(this._email).equals(ValidationUtils.normalizeEmail(fn));
+    public Boolean isEmail(String email) throws RegexFormatError {
+        if (ValidationUtils.isEmailValid(email)) {
+            return ValidationUtils.normalizeEmail(this._email).equals(ValidationUtils.normalizeEmail(email));
         } else {
              return false;
         }

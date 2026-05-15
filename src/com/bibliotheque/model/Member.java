@@ -23,8 +23,8 @@ import java.util.Vector;
  */
 public class Member extends User {
 
-    private double                  _penalty;
-    private boolean                 _isBlocked;
+    private double              _penalty;
+    private boolean             _isBlocked;
     private final Vector<Borrow>    _borrows = new Vector<>();
     private final Vector<Event> _participatedEvents = new Vector<>();
 
@@ -167,5 +167,15 @@ public class Member extends User {
      */
     public List<Event> getParticipatedEvents() {
         return Collections.unmodifiableList(this._participatedEvents);
+    }
+
+    /**
+     * Returns a string representation of the member, consisting of their full name.
+     * 
+     * @return the member's first name followed by their last name
+     */
+    @Override
+    public String toString() {
+        return this.getFirstName() + " " + this.getLastName();
     }
 }

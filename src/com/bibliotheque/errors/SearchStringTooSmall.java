@@ -7,15 +7,18 @@ package com.bibliotheque.errors;
  * when the provided search criteria are too vague (e.g., shorter than 3 characters).
  * </p>
  *
+ * @see com.bibliotheque.model.SearchingWork
+ * 
  * @version 1.0
  */
-public class SearchStringTooSmall extends Exception{
+public class SearchStringTooSmall extends Exception {
+
     /**
      * Constructs a new exception with a specific detail message.
      *
      * @param errorMessage The detailed message describing the validation failure.
      */
-    public SearchStringTooSmall (String errorMessage) {
+    public SearchStringTooSmall(String errorMessage) {
         super(errorMessage);
     }
 }

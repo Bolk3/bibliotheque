@@ -8,15 +8,19 @@ package com.bibliotheque.errors;
  * if the provided {@link Class} argument is not a valid subtype of {@link Work}.
  * </p>
  *
+ * @see com.bibliotheque.model.SearchingWork#searchByType(java.util.Set, Class)
+ * @see com.bibliotheque.model.Work
+ * 
  * @version 1.0
  */
-public class SearchClassNotInherits extends Exception{
+public class SearchClassNotInherits extends Exception {
+
     /**
      * Constructs a new exception with a specific detail message.
      *
      * @param errorMessage The detailed message explaining the inheritance failure.
      */
-    public SearchClassNotInherits (String errorMessage) {
+    public SearchClassNotInherits(String errorMessage) {
         super(errorMessage);
     }
 }
