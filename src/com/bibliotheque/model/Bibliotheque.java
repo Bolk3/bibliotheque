@@ -106,6 +106,59 @@ public class Bibliotheque {
         return borrow;
     }
 
+    /**
+     * Completely removes an author from the system registry and unlinks them from any associated catalog works.
+     * 
+     * @param firstName the explicit first name criteria of the author to drop
+     * @param lastName  the explicit last name criteria of the author to drop
+     */
+    public void removeAuthor(String firstName, String lastName) {
+        _authors.removeIf(a -> a.getFirstName().equals(firstName)
+                            && a.getLastName().equals(lastName));
+        
+        _catalogue.forEach(w -> w.removeAuthor(firstName, lastName));
+    }
+
+    /**
+     * Updates the metadata of an existing work in the catalogue.
+     *
+     * <p>Directly mutates the fields of the existing instance, avoiding
+     * the need to recreate an object and lose its reference in the catalogue.</p>
+     *
+     * @param target      the existing work to update; must be present in the catalogue
+     * @param title       the new title
+     * @param category    the new call number (cote)
+     * @param editor      the new editor / publishing house
+     * @param pubDate     the new publication date
+     * @param authors     the new list of authors
+     * @param extraField  the ISBN (if Book) or the region code (if Dvd)
+     * @throws IllegalArgumentException if {@code target} is null or not found in the catalogue
+     */
+    public void updateWork(Work target, String title, String category,
+                        String editor, Date pubDate,
+                        List<Author> authors, String extraField) {
+        if (target == null || !_catalogue.contains(target)) {
+            throw new IllegalArgumentException("L'œuvre cible est introuvable dans le catalogue.");
+        }
+
+        target.setTitle(title);
+        target.setCategory(category);
+        target.setEditor(editor);
+        target.setPublicationDate(pubDate);
+
+        // Réinitialise les auteurs
+        new HashSet<>(target.getAuthors())
+            .forEach(a -> target.removeAuthor(a.getFirstName(), a.getLastName()));
+        authors.forEach(target::addAuthor);
+
+        // Champ spécifique au type
+        if (target instanceof Book) {
+            ((Book) target).setIsbn(extraField);
+        } else if (target instanceof Dvd) {
+            ((Dvd) target).setRegion(extraField);
+        }
+    }
+
     // --- Search Queries ---
     
     /**
@@ -219,16 +272,4 @@ public class Bibliotheque {
             .orElseThrow(() -> new IndexOutOfBoundsException("Index: " + i));
     }
 
-    /**
-     * Completely removes an author from the system registry and unlinks them from any associated catalog works.
-     * 
-     * @param firstName the explicit first name criteria of the author to drop
-     * @param lastName  the explicit last name criteria of the author to drop
-     */
-    public void removeAuthor(String firstName, String lastName) {
-        _authors.removeIf(a -> a.getFirstName().equals(firstName)
-                            && a.getLastName().equals(lastName));
-        
-        _catalogue.forEach(w -> w.removeAuthor(firstName, lastName));
-    }
 }

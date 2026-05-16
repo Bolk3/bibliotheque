@@ -113,8 +113,9 @@ public class WorkInfoPanel extends JPanel {
         actionsPanel.setBackground(Color.WHITE);
 
         AccessButton borrowButton = new AccessButton("Emprunter", this::handleBorrowAction);
-        AccessButton addCopyButton = new AccessButton("Ajouter une copie", () -> 
-                new AddCopyForm(this._businessLogic, this._workContext, this));
+        AccessButton addCopyButton = new AccessButton("Ajouter une copie", () -> {
+            new AddCopyForm(this._businessLogic, this._workContext, this).setVisible(true);
+        });
         AccessButton editWorkButton = new AccessButton("Modifier l'œuvre", () -> 
                 this._viewController.goForward(new EditWorkForm(this._businessLogic, this._workContext, this._viewController, this)));
 

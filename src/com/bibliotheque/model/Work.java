@@ -35,13 +35,13 @@ import java.util.stream.Collectors;
 public abstract class Work {
 
     private final Bibliotheque  _handler;
-    private final String        _title;
-    private final String        _category;
-    private final String        _editor;
-    private final Date          _publicationDate;
     private final List<Copy>    _copies     = new ArrayList<>();
     private final Set<Author>   _authors    = new HashSet<>();
     private final Set<Event>    _evenements = new HashSet<>();
+    private String              _title;
+    private String              _category;
+    private String              _editor;
+    private Date                _publicationDate;
 
     /**
      * Constructs the fundamental metadata for any library work.
@@ -267,5 +267,21 @@ public abstract class Work {
      */
     public Set<Event> getEvents() {
         return Collections.unmodifiableSet(this._evenements);
+    }
+
+    public void setTitle(String title) {
+        this._title = title; 
+    }
+
+    public void setCategory(String category) {
+        this._category = category;
+    }
+
+    public void setEditor(String editor) {
+        this._editor = editor;
+    }
+
+    public void setPublicationDate(Date publicationDate) {
+        this._publicationDate = new Date(publicationDate.getTime());
     }
 }

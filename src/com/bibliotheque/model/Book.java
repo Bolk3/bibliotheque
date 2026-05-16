@@ -22,7 +22,7 @@ import java.util.Date;
  */
 public class Book extends Work {
 
-    private final String _isbn;
+    private String  _isbn;
 
     /**
      * Constructs a new {@code Book} instance with its specific identifier.
@@ -75,5 +75,9 @@ public class Book extends Work {
      */
     public String getIsbn() {
         return this._isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this._isbn = isbn;
     }
 }

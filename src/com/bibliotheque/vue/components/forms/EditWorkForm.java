@@ -3,9 +3,7 @@ package com.bibliotheque.vue.components.forms;
 import com.bibliotheque.model.Author;
 import com.bibliotheque.model.Bibliotheque;
 import com.bibliotheque.model.Book;
-import com.bibliotheque.model.Copy;
 import com.bibliotheque.model.Dvd;
-import com.bibliotheque.model.Event;
 import com.bibliotheque.model.Work;
 import com.bibliotheque.vue.MainFrame;
 import com.bibliotheque.vue.components.AccessButton;
@@ -265,62 +263,51 @@ public class EditWorkForm extends JPanel {
         List<Author> selectedAuthorsList = _authorPickerList.getSelectedValuesList();
 
         if (inputTitle.isEmpty() || inputCategory.isEmpty() || inputPublisher.isEmpty() || inputPolymorphic.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                    "Veuillez renseigner l'intégralité des champs obligatoires.", 
-                    "Données manquantes", 
+            JOptionPane.showMessageDialog(this,
+                    "Veuillez renseigner l'intégralité des champs obligatoires.",
+                    "Données manquantes",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         if (selectedAuthorsList.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                    "L'œuvre doit être rattachée à au moins un auteur référencé.", 
-                    "Auteur manquant", 
+            JOptionPane.showMessageDialog(this,
+                    "L'œuvre doit être rattachée à au moins un auteur référencé.",
+                    "Auteur manquant",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            // Build absolute temporal stamp mapping selected combo values
             int evaluationDay   = (int) _publicationDayCombo.getSelectedItem();
             int evaluationMonth = _publicationMonthCombo.getSelectedIndex();
             int evaluationYear  = (int) _publicationYearCombo.getSelectedItem();
             Date updatedTimelineFrame = new Date(evaluationYear - 1900, evaluationMonth, evaluationDay);
 
-            Work recompiledWorkEntity;
-            if (_activeWorkContext instanceof Book) {
-                recompiledWorkEntity = new Book(inputPolymorphic, inputTitle, inputCategory, inputPublisher, updatedTimelineFrame, _businessLogic);
-            } else {
-                recompiledWorkEntity = new Dvd(inputTitle, inputCategory, inputPublisher, updatedTimelineFrame, _businessLogic, inputPolymorphic);
-            }
+            _businessLogic.updateWork(
+                _activeWorkContext,
+                inputTitle,
+                inputCategory,
+                inputPublisher,
+                updatedTimelineFrame,
+                selectedAuthorsList,
+                inputPolymorphic
+            );
 
-            // Migrates associated records over to the newly instantiated instance wrapper 
-            for (Author trackingAuthor : selectedAuthorsList) {
-                recompiledWorkEntity.addAuthor(trackingAuthor);
-            }
-            for (Copy physicalCopy : _activeWorkContext.getCopies()) {
-                recompiledWorkEntity.addCopy(physicalCopy);
-            }
-            for (Event trackingEvent : _activeWorkContext.getEvents()) {
-                recompiledWorkEntity.addEvent(trackingEvent);
-            }
-
-            // Propagate altered records up context pipelines updating target frames
-            _parentPresentationPanel.setHandle(recompiledWorkEntity);
             _parentPresentationPanel.updateWorkDetails();
             _parentPresentationPanel.updateCopiesTable();
 
-            JOptionPane.showMessageDialog(this, 
-                    "L'œuvre a été modifiée avec succès !", 
-                    "Modification enregistrée", 
+            JOptionPane.showMessageDialog(this,
+                    "L'œuvre a été modifiée avec succès !",
+                    "Modification enregistrée",
                     JOptionPane.INFORMATION_MESSAGE);
-            
+
             _viewController.goBack();
-            
+
         } catch (Exception executionException) {
-            JOptionPane.showMessageDialog(this, 
-                    "Une erreur système est survenue lors de l'archivage des modifications :\n" + executionException.getMessage(), 
-                    "Échec d'infrastructure", 
+            JOptionPane.showMessageDialog(this,
+                    "Une erreur système est survenue lors de l'archivage des modifications :\n" + executionException.getMessage(),
+                    "Échec d'infrastructure",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

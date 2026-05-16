@@ -22,7 +22,7 @@ import java.util.Date;
  */
 public class Dvd extends Work {
 
-    private final String _region;
+    private String _region;
 
     /**
      * Constructs a new {@code Dvd} instance with its media-specific attributes.
@@ -77,5 +77,9 @@ public class Dvd extends Work {
      */
     public String getRegion() {
         return this._region;
+    }
+
+    public void setRegion(String region) {
+        this._region = region;
     }
 }
