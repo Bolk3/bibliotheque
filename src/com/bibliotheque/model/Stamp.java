@@ -26,13 +26,13 @@ import java.util.Date;
  * @see Borrow
  * @see Librarian
  *
- * @version 1.1
+ * @version 1.2
  */
 public abstract class Stamp {
 
-    private final Date              _timestamp;
-    private final Librarian         _validatedBy;
-    private final Borrow            _reference;
+    private final Date        _timestamp;
+    private final Librarian   _validatedBy;
+    private final Borrow      _reference;
 
     /**
      * Initialises the core attributes of a transaction stamp.
@@ -48,9 +48,22 @@ public abstract class Stamp {
      *                    must not be {@code null}
      * @param reference   the {@link Borrow} transaction this stamp belongs to;
      *                    must not be {@code null}
+     * @throws IllegalArgumentException if any of the parameters are {@code null}
      */
     public Stamp(Date timestamp, Librarian validatedBy, Borrow reference) {
-        this._timestamp   = timestamp;
+        if (timestamp == null) {
+            throw new IllegalArgumentException("The event timestamp cannot be null.");
+        }
+        if (validatedBy == null) {
+            throw new IllegalArgumentException("The validating librarian cannot be null.");
+        }
+        if (reference == null) {
+            throw new IllegalArgumentException("The borrowing transaction reference cannot be null.");
+        }
+
+        // COPIE DÉFENSIVE À L'ENTRÉE : Casse le lien de référence avec l'extérieur
+        // pour garantir l'immuabilité complète de l'objet Date.
+        this._timestamp   = new Date(timestamp.getTime());
         this._validatedBy = validatedBy;
         this._reference   = reference;
     }

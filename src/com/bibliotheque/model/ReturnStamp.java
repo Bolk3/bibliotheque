@@ -23,7 +23,7 @@ import java.util.Date;
  * @see Borrow
  * @see Librarian
  *
- * @version 1.1
+ * @version 1.2
  */
 public class ReturnStamp extends Stamp {
 
@@ -44,9 +44,15 @@ public class ReturnStamp extends Stamp {
      *                    must not be {@code null}
      * @param validatedBy the {@link Librarian} processing the return;
      *                    must not be {@code null}
+     * @throws IllegalArgumentException if any of the parameters are {@code null}
      */
     public ReturnStamp(String returnState, Borrow reference, Librarian validatedBy) {
         super(new Date(), validatedBy, reference);
+        
+        if (returnState == null) {
+            throw new IllegalArgumentException("The return state condition cannot be null.");
+        }
+        
         this._returnState = returnState;
     }
 

@@ -23,7 +23,7 @@ import java.util.Date;
  * @see Borrow
  * @see Librarian
  *
- * @version 1.1
+ * @version 1.2
  */
 public class ExtensionStamp extends Stamp {
 
@@ -46,10 +46,17 @@ public class ExtensionStamp extends Stamp {
      *                      extension; must not be {@code null}
      * @param reference     the {@link Borrow} transaction this extension
      *                      applies to; must not be {@code null}
+     * @throws IllegalArgumentException if any of the parameters are {@code null}
      */
     public ExtensionStamp(Date extensionDate, Librarian validatedBy, Borrow reference) {
         super(new Date(), validatedBy, reference);
-        this._extensionDate = extensionDate;
+        
+        if (extensionDate == null) {
+            throw new IllegalArgumentException("The extension due date cannot be null.");
+        }
+        
+        // Copie défensive à l'entrée
+        this._extensionDate = new Date(extensionDate.getTime());
     }
 
     // -------------------------------------------------------------------------
